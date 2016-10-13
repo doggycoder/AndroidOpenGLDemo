@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">AndroidOpenGLDemo</string>
+    <string name="app_name">OpenGL</string>
+    <string name="change">切换</string>
 </resources>
