@@ -8,10 +8,13 @@
 package edu.wuwang.opengl;
 
 import android.app.Activity;
+import android.app.IntentService;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import edu.wuwang.opengl.render.Cube;
 import edu.wuwang.opengl.render.Square;
 import edu.wuwang.opengl.render.Triangle;
+import edu.wuwang.opengl.render.TriangleColorFull;
 import edu.wuwang.opengl.render.TriangleWithCamera;
 
 /**
@@ -44,12 +48,22 @@ public class ChooseActivity extends Activity {
         initData();
         mList= (ListView) findViewById(R.id.mList);
         mList.setAdapter(new Adapter());
+        mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent=new Intent();
+                intent.putExtra("name",mData.get(position).clazz);
+                setResult(RESULT_OK,intent);
+                finish();
+            }
+        });
     }
 
     private void initData(){
         mData=new ArrayList<>();
         add("三角形", Triangle.class);
         add("正三角形", TriangleWithCamera.class);
+        add("彩色三角形", TriangleColorFull.class);
         add("正方形", Square.class);
         add("正方体", Cube.class);
     }

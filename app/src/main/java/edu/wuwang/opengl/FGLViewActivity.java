@@ -16,6 +16,8 @@ import android.widget.Button;
 
 import java.util.HashMap;
 
+import edu.wuwang.opengl.render.Shape;
+
 /**
  * Description:
  */
@@ -48,4 +50,21 @@ public class FGLViewActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mGLView.setShape((Class<? extends Shape>) data.getSerializableExtra("name"));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGLView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mGLView.onPause();
+    }
 }

@@ -12,13 +12,14 @@ import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 
 import edu.wuwang.opengl.render.FGLRender;
+import edu.wuwang.opengl.render.Shape;
 
 /**
  * Description:
  */
 public class FGLView extends GLSurfaceView {
 
-    private Renderer renderer;
+    private FGLRender renderer;
 
     public FGLView(Context context) {
         this(context,null);
@@ -34,4 +35,13 @@ public class FGLView extends GLSurfaceView {
         setRenderer(renderer=new FGLRender());
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
+
+    public void setShape(Class<? extends Shape> clazz){
+        try {
+            renderer.setShape(clazz);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
