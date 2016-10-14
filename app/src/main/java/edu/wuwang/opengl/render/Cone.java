@@ -77,7 +77,7 @@ public class Cone extends Shape {
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-//计算宽高比
+        //计算宽高比
         float ratio=(float)width/height;
         //设置透视投影
         Matrix.frustumM(mProjectMatrix, 0, -ratio, ratio, -1, 1, 3, 20);
@@ -89,7 +89,6 @@ public class Cone extends Shape {
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT|GLES20.GL_DEPTH_BUFFER_BIT);
         GLES20.glUseProgram(mProgram);
         Log.e("wuwang","mProgram:"+mProgram);
         int mMatrix=GLES20.glGetUniformLocation(mProgram,"vMatrix");

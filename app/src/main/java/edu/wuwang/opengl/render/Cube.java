@@ -129,8 +129,6 @@ public class Cube extends Shape{
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         //开启深度测试
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        //清除深度缓存和颜色缓存(不应该在这里)
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT| GLES20.GL_DEPTH_BUFFER_BIT);
     }
 
     @Override
