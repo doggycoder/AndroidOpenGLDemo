@@ -3,7 +3,6 @@
  * Cone.java
  * 
  * Created by Wuwang on 2016/10/14
- * Copyright © 2016年 深圳哎吖科技. All rights reserved.
  */
 package edu.wuwang.opengl.render;
 

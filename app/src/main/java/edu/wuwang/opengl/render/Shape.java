@@ -3,7 +3,6 @@
  * Shape.java
  * 
  * Created by Wuwang on 2016/9/30
- * Copyright © 2016年 深圳哎吖科技. All rights reserved.
  */
 package edu.wuwang.opengl.render;
 
