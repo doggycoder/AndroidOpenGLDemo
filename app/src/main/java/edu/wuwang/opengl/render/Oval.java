@@ -95,7 +95,7 @@ public class Oval extends Shape {
 
     private float[]  createPositions(){
         ArrayList<Float> data=new ArrayList<>();
-        data.add(0.0f);
+        data.add(0.0f);             //设置圆心坐标
         data.add(0.0f);
         data.add(0.0f);
         float angDegSpan=360f/n;

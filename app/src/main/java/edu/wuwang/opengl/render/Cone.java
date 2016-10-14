@@ -22,7 +22,7 @@ import javax.microedition.khronos.opengles.GL10;
 import edu.wuwang.opengl.utils.ShaderUtils;
 
 /**
- * Description:
+ * Description:圆锥
  */
 public class Cone extends Shape {
 
