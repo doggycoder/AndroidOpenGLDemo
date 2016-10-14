@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import edu.wuwang.opengl.render.Cone;
 import edu.wuwang.opengl.render.Cube;
 import edu.wuwang.opengl.render.Oval;
 import edu.wuwang.opengl.render.Square;
@@ -68,6 +69,7 @@ public class ChooseActivity extends Activity {
         add("正方形", Square.class);
         add("圆形", Oval.class);
         add("正方体", Cube.class);
+        add("圆锥", Cone.class);
     }
 
     private void add(String showName,Class<?> clazz){

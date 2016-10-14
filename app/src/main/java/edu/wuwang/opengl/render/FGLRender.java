@@ -10,6 +10,9 @@ package edu.wuwang.opengl.render;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
+import android.view.View;
+
+import java.lang.reflect.Constructor;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -17,10 +20,14 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Description:
  */
-public class FGLRender implements GLSurfaceView.Renderer {
+public class FGLRender extends Shape {
 
     private Shape shape;
     private Class<? extends Shape> clazz=Cube.class;
+
+    public FGLRender(View mView) {
+        super(mView);
+    }
 
     public void setShape(Class<? extends Shape> shape){
         this.clazz=shape;
@@ -31,10 +38,12 @@ public class FGLRender implements GLSurfaceView.Renderer {
         GLES20.glClearColor(0.5f,0.5f,0.5f,1.0f);
         Log.e("wuwang","onSurfaceCreated");
         try {
-            shape=clazz.newInstance();
+            Constructor constructor=clazz.getDeclaredConstructor(View.class);
+            constructor.setAccessible(true);
+            shape= (Shape) constructor.newInstance(mView);
         } catch (Exception e) {
             e.printStackTrace();
-            shape=new Cube();
+            shape=new Cube(mView);
         }
         shape.onSurfaceCreated(gl,config);
     }

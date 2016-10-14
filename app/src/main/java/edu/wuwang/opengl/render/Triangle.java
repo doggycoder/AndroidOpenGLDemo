@@ -8,6 +8,7 @@
 package edu.wuwang.opengl.render;
 
 import android.opengl.GLES20;
+import android.view.View;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -59,7 +60,8 @@ public class Triangle extends Shape {
     //设置颜色，依次为红绿蓝和透明通道
     float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    public Triangle() {
+    public Triangle(View mView) {
+        super(mView);
         ByteBuffer bb = ByteBuffer.allocateDirect(
                 triangleCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());

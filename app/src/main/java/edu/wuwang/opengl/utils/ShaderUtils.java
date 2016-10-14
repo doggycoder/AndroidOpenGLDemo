@@ -5,8 +5,9 @@
  * Created by Wuwang on 2016/10/8
  * Copyright © 2016年 深圳哎吖科技. All rights reserved.
  */
-package edu.wuwang.opengl.render;
+package edu.wuwang.opengl.utils;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.opengl.GLES20;
 import android.util.Log;
@@ -24,7 +25,7 @@ public class ShaderUtils {
     }
 
     public static void checkGLError(String op){
-
+        Log.e("wuwang",op);
     }
 
     public static int loadShader(int shaderType,String source){
@@ -42,6 +43,10 @@ public class ShaderUtils {
             }
         }
         return shader;
+    }
+
+    public static int loadShader(Resources res,int shaderType,String resName){
+        return loadShader(shaderType,loadFromAssetsFile(resName,res));
     }
 
     public static int createProgram(String vertexSource, String fragmentSource){
@@ -67,6 +72,10 @@ public class ShaderUtils {
         return program;
     }
 
+    public static int createProgram(Resources res,String vertexRes,String fragmentRes){
+        return createProgram(loadFromAssetsFile(vertexRes,res),loadFromAssetsFile(fragmentRes,res));
+    }
+
     public static String loadFromAssetsFile(String fname, Resources res){
         StringBuilder result=new StringBuilder();
         try{
@@ -77,7 +86,7 @@ public class ShaderUtils {
                 result.append(new String(buffer,0,ch));
             }
         }catch (Exception e){
-
+            return null;
         }
         return result.toString().replaceAll("\\r\\n","\n");
     }

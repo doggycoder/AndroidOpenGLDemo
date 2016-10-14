@@ -9,6 +9,7 @@ package edu.wuwang.opengl.render;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.view.View;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -90,7 +91,8 @@ public class Cube extends Shape{
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 每个顶点四个字节
 
 
-    public Cube() {
+    public Cube(View mView) {
+        super(mView);
         ByteBuffer bb = ByteBuffer.allocateDirect(
                 cubePositions.length * 4);
         bb.order(ByteOrder.nativeOrder());

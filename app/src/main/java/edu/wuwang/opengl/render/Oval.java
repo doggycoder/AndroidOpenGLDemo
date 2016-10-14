@@ -9,6 +9,7 @@ package edu.wuwang.opengl.render;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.view.View;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -56,12 +57,16 @@ public class Oval extends Shape {
 
     private int mMatrixHandler;
 
+    private float radius=1.0f;
+    private int n=360;  //切割份数
+
     private float[] shapePos;
 
     //设置颜色，依次为红绿蓝和透明通道
     float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    public Oval() {
+    public Oval(View mView) {
+        super(mView);
         shapePos= createPositions();
         ByteBuffer bb = ByteBuffer.allocateDirect(
                 shapePos.length * 4);
@@ -85,14 +90,19 @@ public class Oval extends Shape {
         GLES20.glLinkProgram(mProgram);
     }
 
+    public void setRadius(float radius){
+        this.radius=radius;
+    }
+
     private float[]  createPositions(){
         ArrayList<Float> data=new ArrayList<>();
         data.add(0.0f);
         data.add(0.0f);
         data.add(0.0f);
-        for(int i=0;i<=362;i++){
-            data.add((float) (1f*Math.sin(i*Math.PI/180f)));
-            data.add((float) (1f*Math.cos(i*Math.PI/180f)));
+        float angDegSpan=360f/n;
+        for(float i=0;i<360+angDegSpan;i+=angDegSpan){
+            data.add((float) (radius*Math.sin(i*Math.PI/180f)));
+            data.add((float)(radius*Math.cos(i*Math.PI/180f)));
             data.add(0.0f);
         }
         float[] f=new float[data.size()];
@@ -119,6 +129,10 @@ public class Oval extends Shape {
         Matrix.multiplyMM(mMVPMatrix,0,mProjectMatrix,0,mViewMatrix,0);
     }
 
+    public void setMatrix(float[] matrix){
+        this.mMVPMatrix=matrix;
+    }
+
     @Override
     public void onDrawFrame(GL10 gl) {
         //将程序加入到OpenGLES2.0环境
@@ -140,7 +154,7 @@ public class Oval extends Shape {
         //设置绘制三角形的颜色
         GLES20.glUniform4fv(mColorHandle, 1, color, 0);
         //绘制三角形
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, shapePos.length/3-2);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, shapePos.length/3);
         //禁止顶点数组的句柄
         GLES20.glDisableVertexAttribArray(mPositionHandle);
     }

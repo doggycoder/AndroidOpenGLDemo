@@ -9,6 +9,7 @@ package edu.wuwang.opengl.render;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.view.View;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -70,7 +71,8 @@ public class TriangleColorFull extends Shape {
             0.0f, 0.0f, 1.0f, 1.0f
     };
 
-    public TriangleColorFull() {
+    public TriangleColorFull(View mView) {
+        super(mView);
         ByteBuffer bb = ByteBuffer.allocateDirect(
                 triangleCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
