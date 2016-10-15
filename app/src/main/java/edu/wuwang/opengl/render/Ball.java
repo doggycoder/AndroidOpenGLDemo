@@ -1,9 +1,3 @@
-/*
- *
- * Cone.java
- * 
- * Created by Wuwang on 2016/10/14
- */
 package edu.wuwang.opengl.render;
 
 import android.opengl.GLES20;
@@ -22,57 +16,68 @@ import javax.microedition.khronos.opengles.GL10;
 import edu.wuwang.opengl.utils.ShaderUtils;
 
 /**
- * Description:圆锥
+ * Created by wuwang on 2016/10/15
  */
-public class Cone extends Shape {
+public class Ball extends Shape {
+
+    private float step=2f;
+    private FloatBuffer vertexBuffer;
+    private int vSize;
 
     private int mProgram;
-
-    private Oval oval;
-    private FloatBuffer vertexBuffer;
-
     private float[] mViewMatrix=new float[16];
     private float[] mProjectMatrix=new float[16];
     private float[] mMVPMatrix=new float[16];
 
-    private int n=360;  //切割份数
-    private float height=2.0f;  //圆锥高度
-    private float radius=1.0f;  //圆锥底面半径
-    private float[] colors={1.0f,1.0f,1.0f,1.0f};
-
-    private int vSize;
-
-    public Cone(View mView){
+    public Ball(View mView) {
         super(mView);
-        oval=new Oval(mView);
-        ArrayList<Float> pos=new ArrayList<>();
-        pos.add(0.0f);
-        pos.add(0.0f);
-        pos.add(height);
-        float angDegSpan=360f/n;
-        for(float i=0;i<360+angDegSpan;i+=angDegSpan){
-            pos.add((float) (radius*Math.sin(i*Math.PI/180f)));
-            pos.add((float)(radius*Math.cos(i*Math.PI/180f)));
-            pos.add(0.0f);
-        }
-        float[] d=new float[pos.size()];
-        for (int i=0;i<d.length;i++){
-            d[i]=pos.get(i);
-        }
-        vSize=d.length/3;
-        ByteBuffer buffer=ByteBuffer.allocateDirect(d.length*4);
+        float[] dataPos=createBallPos();
+        ByteBuffer buffer=ByteBuffer.allocateDirect(dataPos.length*4);
         buffer.order(ByteOrder.nativeOrder());
         vertexBuffer=buffer.asFloatBuffer();
-        vertexBuffer.put(d);
+        vertexBuffer.put(dataPos);
         vertexBuffer.position(0);
+        vSize=dataPos.length/3;
     }
+    
+    private float[] createBallPos(){
+        //球以(0,0,0)为中心，以R为半径，则球上任意一点的坐标为
+        // ( R * cos(a) * sin(b),y0 = R * sin(a),R * cos(a) * cos(b))
+        // 其中，a为圆心到点的线段与xz平面的夹角，b为圆心到点的线段在xz平面的投影与z轴的夹角
+        ArrayList<Float> data=new ArrayList<>();
+        float r1,r2;
+        float h1,h2;
+        float sin,cos;
+        for(float i=-90;i<90+step;i+=step){
+            r1 = (float)Math.cos(i * Math.PI / 180.0);
+            r2 = (float)Math.cos((i + step) * Math.PI / 180.0);
+            h1 = (float)Math.sin(i * Math.PI / 180.0);
+            h2 = (float)Math.sin((i + step) * Math.PI / 180.0);
+            // 固定纬度, 360 度旋转遍历一条纬线
+            float step2=step*2;
+            for (float j = 0.0f; j <360.0f+step; j +=step2 ) {
+                cos = (float) Math.cos(j * Math.PI / 180.0);
+                sin = -(float) Math.sin(j * Math.PI / 180.0);
 
+                data.add(r2 * cos);
+                data.add(h2);
+                data.add(r2 * sin);
+                data.add(r1 * cos);
+                data.add(h1);
+                data.add(r1 * sin);
+            }
+        }
+        float[] f=new float[data.size()];
+        for(int i=0;i<f.length;i++){
+            f[i]=data.get(i);
+        }
+        return f;
+    }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        mProgram=ShaderUtils.createProgram(mView.getResources(),"vshader/Cone.sh","fshader/Cone.sh");
-        oval.onSurfaceCreated(gl,config);
+        mProgram= ShaderUtils.createProgram(mView.getResources(),"vshader/Ball.sh","fshader/Cone.sh");
     }
 
     @Override
@@ -97,12 +102,7 @@ public class Cone extends Shape {
         Log.e("wuwang","Get Position:"+mPositionHandle);
         GLES20.glEnableVertexAttribArray(mPositionHandle);
         GLES20.glVertexAttribPointer(mPositionHandle,3,GLES20.GL_FLOAT,false,0,vertexBuffer);
-//        int mColorHandle=GLES20.glGetUniformLocation(mProgram,"vColor");
-//        GLES20.glEnableVertexAttribArray(mColorHandle);
-//        GLES20.glUniform4fv(mColorHandle,1,colors,0);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN,0,vSize);
         GLES20.glDisableVertexAttribArray(mPositionHandle);
-        oval.setMatrix(mMVPMatrix);
-        oval.onDrawFrame(gl);
     }
 }

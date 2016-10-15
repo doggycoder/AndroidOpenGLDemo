@@ -1,9 +1,3 @@
-/*
- *
- * Cone.java
- * 
- * Created by Wuwang on 2016/10/14
- */
 package edu.wuwang.opengl.render;
 
 import android.opengl.GLES20;
@@ -22,13 +16,13 @@ import javax.microedition.khronos.opengles.GL10;
 import edu.wuwang.opengl.utils.ShaderUtils;
 
 /**
- * Description:圆锥
+ * Created by wuwang on 2016/10/15
  */
-public class Cone extends Shape {
+public class Cylinder extends Shape {
 
     private int mProgram;
 
-    private Oval oval;
+    private Oval ovalBottom,ovalTop;
     private FloatBuffer vertexBuffer;
 
     private float[] mViewMatrix=new float[16];
@@ -38,19 +32,19 @@ public class Cone extends Shape {
     private int n=360;  //切割份数
     private float height=2.0f;  //圆锥高度
     private float radius=1.0f;  //圆锥底面半径
-    private float[] colors={1.0f,1.0f,1.0f,1.0f};
 
     private int vSize;
 
-    public Cone(View mView){
+    public Cylinder(View mView){
         super(mView);
-        oval=new Oval(mView);
+        ovalBottom=new Oval(mView);
+        ovalTop=new Oval(mView,height);
         ArrayList<Float> pos=new ArrayList<>();
-        pos.add(0.0f);
-        pos.add(0.0f);
-        pos.add(height);
         float angDegSpan=360f/n;
         for(float i=0;i<360+angDegSpan;i+=angDegSpan){
+            pos.add((float) (radius*Math.sin(i*Math.PI/180f)));
+            pos.add((float)(radius*Math.cos(i*Math.PI/180f)));
+            pos.add(height);
             pos.add((float) (radius*Math.sin(i*Math.PI/180f)));
             pos.add((float)(radius*Math.cos(i*Math.PI/180f)));
             pos.add(0.0f);
@@ -71,8 +65,9 @@ public class Cone extends Shape {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        mProgram=ShaderUtils.createProgram(mView.getResources(),"vshader/Cone.sh","fshader/Cone.sh");
-        oval.onSurfaceCreated(gl,config);
+        mProgram= ShaderUtils.createProgram(mView.getResources(),"vshader/Cone.sh","fshader/Cone.sh");
+        ovalBottom.onSurfaceCreated(gl,config);
+        ovalTop.onSurfaceCreated(gl,config);
     }
 
     @Override
@@ -100,9 +95,12 @@ public class Cone extends Shape {
 //        int mColorHandle=GLES20.glGetUniformLocation(mProgram,"vColor");
 //        GLES20.glEnableVertexAttribArray(mColorHandle);
 //        GLES20.glUniform4fv(mColorHandle,1,colors,0);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN,0,vSize);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP,0,vSize);
         GLES20.glDisableVertexAttribArray(mPositionHandle);
-        oval.setMatrix(mMVPMatrix);
-        oval.onDrawFrame(gl);
+        ovalBottom.setMatrix(mMVPMatrix);
+        ovalBottom.onDrawFrame(gl);
+        ovalTop.setMatrix(mMVPMatrix);
+        ovalTop.onDrawFrame(gl);
     }
+
 }

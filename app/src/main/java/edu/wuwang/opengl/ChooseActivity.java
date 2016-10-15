@@ -20,8 +20,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import edu.wuwang.opengl.render.Ball;
 import edu.wuwang.opengl.render.Cone;
 import edu.wuwang.opengl.render.Cube;
+import edu.wuwang.opengl.render.Cylinder;
 import edu.wuwang.opengl.render.Oval;
 import edu.wuwang.opengl.render.Square;
 import edu.wuwang.opengl.render.Triangle;
@@ -69,6 +71,8 @@ public class ChooseActivity extends Activity {
         add("圆形", Oval.class);
         add("正方体", Cube.class);
         add("圆锥", Cone.class);
+        add("圆柱", Cylinder.class);
+        add("球体", Ball.class);
     }
 
     private void add(String showName,Class<?> clazz){
