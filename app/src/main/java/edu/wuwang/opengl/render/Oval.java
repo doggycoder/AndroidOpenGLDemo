@@ -61,11 +61,18 @@ public class Oval extends Shape {
 
     private float[] shapePos;
 
+    private float height=0.0f;
+
     //设置颜色，依次为红绿蓝和透明通道
     float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    public Oval(View mView) {
+    public Oval(View mView){
+        this(mView,0.0f);
+    }
+
+    public Oval(View mView,float height) {
         super(mView);
+        this.height=height;
         shapePos= createPositions();
         ByteBuffer bb = ByteBuffer.allocateDirect(
                 shapePos.length * 4);
@@ -97,12 +104,12 @@ public class Oval extends Shape {
         ArrayList<Float> data=new ArrayList<>();
         data.add(0.0f);             //设置圆心坐标
         data.add(0.0f);
-        data.add(0.0f);
+        data.add(height);
         float angDegSpan=360f/n;
         for(float i=0;i<360+angDegSpan;i+=angDegSpan){
             data.add((float) (radius*Math.sin(i*Math.PI/180f)));
             data.add((float)(radius*Math.cos(i*Math.PI/180f)));
-            data.add(0.0f);
+            data.add(height);
         }
         float[] f=new float[data.size()];
         for (int i=0;i<f.length;i++){
