@@ -27,113 +27,87 @@ import edu.wuwang.opengl.utils.ShaderUtils;
  */
 public class AFilter implements GLSurfaceView.Renderer {
 
-    public int mProgram;
-    public Context mContext;
-
-    public Bitmap mBitmap;
-
-    private int glHCoordinate;
+    private Context mContext;
+    private int mProgram;
     private int glHPosition;
     private int glHTexture;
+    private int glHCoordinate;
+    private Bitmap mBitmap;
 
-    private String glVertex;
-    private String glFragment;
+    private FloatBuffer bPos;
+    private FloatBuffer bCoord;
 
-    private float[] coordinates={
-            1.0f,0.0f,
-            1.0f,1.0f,
-            0.0f,0.0f,
-            0.0f,1.0f,
-    };
+    private int textureId;
 
-    private float[] position={
+    private String vertex;
+    private String fragment;
+
+    private final float[] sPos={
             -1.0f,1.0f,
             -1.0f,-1.0f,
             1.0f,1.0f,
             1.0f,-1.0f
     };
 
-    private FloatBuffer glDCoordinates;
-    private FloatBuffer glDPosition;
+    private final float[] sCoord={
+            1.0f,0.0f,
+            1.0f,1.0f,
+            0.0f,0.0f,
+            0.0f,1.0f,
+    };
 
-    private int bgColor=0xFFFFFFFF;
-
-    public AFilter(Context context, String vertex,String fragment){
+    public AFilter(Context context,String vertex,String fragment){
         this.mContext=context;
-        this.glVertex=vertex;
-        this.glFragment=fragment;
-
-        glDCoordinates=ByteBuffer.allocateDirect(coordinates.length*4)
-                .order(ByteOrder.nativeOrder())
-                .asFloatBuffer()
-                .put(coordinates);
-        glDCoordinates.position(0);
-        glDPosition=ByteBuffer.allocateDirect(position.length*4)
-                .order(ByteOrder.nativeOrder())
-                .asFloatBuffer()
-                .put(position);
-        glDPosition.position(0);
+        this.vertex=vertex;
+        this.fragment=fragment;
+        ByteBuffer bb=ByteBuffer.allocateDirect(sPos.length*4);
+        bb.order(ByteOrder.nativeOrder());
+        bPos=bb.asFloatBuffer();
+        bPos.put(sPos);
+        bPos.position(0);
+        ByteBuffer cc=ByteBuffer.allocateDirect(sCoord.length*4);
+        cc.order(ByteOrder.nativeOrder());
+        bCoord=cc.asFloatBuffer();
+        bCoord.put(sCoord);
+        bCoord.position(0);
     }
 
-    public final void setBitmap(Bitmap bitmap){
+    public void setImageBuffer(int[] buffer,int width,int height){
+        mBitmap= Bitmap.createBitmap(buffer,width,height, Bitmap.Config.RGB_565);
+    }
+
+    public void setBitmap(Bitmap bitmap){
         this.mBitmap=bitmap;
     }
 
-    public final void init(){
-        onInit();
-    }
-
-    protected void onInit(){
-        mProgram= ShaderUtils.createProgram(mContext.getResources(),glVertex,glFragment);
-        glHCoordinate= GLES20.glGetAttribLocation(mProgram,"vCoordinate");
+    @Override
+    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+        GLES20.glClearColor(1.0f,1.0f,1.0f,1.0f);
+        GLES20.glEnable(GLES20.GL_TEXTURE_2D);
+        mProgram=ShaderUtils.createProgram(mContext.getResources(),vertex,fragment);
         glHPosition=GLES20.glGetAttribLocation(mProgram,"vPosition");
+        glHCoordinate=GLES20.glGetAttribLocation(mProgram,"vCoordinate");
         glHTexture=GLES20.glGetUniformLocation(mProgram,"vTexture");
-    }
 
-
-
-    @Override
-    public final void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        GLES20.glClearColor((bgColor>>4&0xFF)/255f,(bgColor>>2&0xFF)/255f,
-                (bgColor&0xFF)/255f,(bgColor>>6&0xFF)/255f);
-        Log.e("wuwang","bgColor:"+(bgColor>>4&0xFF)/255f);
-        GLES20.glEnable(GLES20.GL_TEXTURE_2D);      //允许2D纹理
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        Log.e("wuwang","开启纹理"+GLES20.glIsEnabled(GLES20.GL_TEXTURE_2D));
-        init();
+        GLES20.glUniform1i(glHTexture, 0);
     }
 
     @Override
-    public final void onSurfaceChanged(GL10 gl, int width, int height) {
+    public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES20.glViewport(0,0,width,height);
     }
 
     @Override
-    public final void onDrawFrame(GL10 gl) {
+    public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT|GLES20.GL_DEPTH_BUFFER_BIT);
         GLES20.glUseProgram(mProgram);
-        GLES20.glEnableVertexAttribArray(glHCoordinate);
-        GLES20.glVertexAttribPointer(glHCoordinate,2,GLES20.GL_FLOAT,false,0,glDCoordinates);
+        GLES20.glUniform1i(glHTexture, 0);
         GLES20.glEnableVertexAttribArray(glHPosition);
-        GLES20.glVertexAttribPointer(glHPosition,2,GLES20.GL_FLOAT,false,0,glDPosition);
+        GLES20.glEnableVertexAttribArray(glHCoordinate);
+        textureId=createTexture();
+        GLES20.glVertexAttribPointer(glHPosition,2,GLES20.GL_FLOAT,false,0,bPos);
+        GLES20.glVertexAttribPointer(glHCoordinate,2,GLES20.GL_FLOAT,false,0,bCoord);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP,0,4);
-        if(mBitmap!=null&&!mBitmap.isRecycled()){
-            int textureId=createTexture();
-            if(textureId>0){
-//                GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-//                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,textureId);
-                GLES20.glUniform1i(glHTexture,0);       //设置第一层纹理
-                Log.e("wuwang","绑定纹理成功");
-            }else{
-                Log.e("wuwang","绑定纹理失败");
-            }
-        }else{
-            Log.e("wuwang","图片为空");
-        }
-
-        GLES20.glDisableVertexAttribArray(glHPosition);
-        GLES20.glDisableVertexAttribArray(glHCoordinate);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,0);
     }
 
     private int createTexture(){
