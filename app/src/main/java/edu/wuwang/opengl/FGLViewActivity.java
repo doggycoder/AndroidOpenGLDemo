@@ -52,7 +52,9 @@ public class FGLViewActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mGLView.setShape((Class<? extends Shape>) data.getSerializableExtra("name"));
+        if(resultCode==RESULT_OK){
+            mGLView.setShape((Class<? extends Shape>) data.getSerializableExtra("name"));
+        }
     }
 
     @Override

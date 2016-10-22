@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">OpenGL</string>
     <string name="change">切换</string>
+
+    <string name="type_draw">绘制形体</string>
+    <string name="type_texture">图片处理</string>
+
+    <string name="pic_easy">原图</string>
+    <string name="pic_half">处理一半</string>
 </resources>

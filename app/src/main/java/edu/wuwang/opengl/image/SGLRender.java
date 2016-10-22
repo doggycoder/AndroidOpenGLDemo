@@ -15,6 +15,8 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import edu.wuwang.opengl.image.filter.AFilter;
+import edu.wuwang.opengl.image.filter.ColorFilter;
+import edu.wuwang.opengl.image.filter.ContrastColorFilter;
 
 /**
  * Description:
@@ -25,7 +27,11 @@ public class SGLRender implements GLSurfaceView.Renderer {
     private Bitmap bitmap;
 
     public SGLRender(View mView){
-        mFilter=new AFilter(mView.getContext(),"filter/default_vertex.sh","filter/default_fragment.sh");
+        mFilter=new ContrastColorFilter(mView.getContext(), ColorFilter.Filter.NONE);
+    }
+
+    public void setFilter(AFilter filter){
+        mFilter=filter;
     }
 
     public void setImageBuffer(int[] buffer,int width,int height){

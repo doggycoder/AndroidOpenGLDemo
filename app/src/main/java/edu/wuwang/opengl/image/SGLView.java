@@ -14,6 +14,8 @@ import android.util.AttributeSet;
 
 import java.io.IOException;
 
+import edu.wuwang.opengl.image.filter.AFilter;
+
 /**
  * Description:
  */
@@ -37,11 +39,16 @@ public class SGLView extends GLSurfaceView {
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
         try {
-            render.setImage(BitmapFactory.decodeStream(getResources().getAssets().open("texture/timg.jpg")));
+            render.setImage(BitmapFactory.decodeStream(getResources().getAssets().open("texture/fengj.png")));
             requestRender();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setFilter(AFilter filter){
+        render.setFilter(filter);
+        requestRender();
     }
 
 }
