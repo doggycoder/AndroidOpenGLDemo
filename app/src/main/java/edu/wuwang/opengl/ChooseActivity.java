@@ -21,6 +21,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import edu.wuwang.opengl.render.Ball;
+import edu.wuwang.opengl.render.BallWithLight;
 import edu.wuwang.opengl.render.Cone;
 import edu.wuwang.opengl.render.Cube;
 import edu.wuwang.opengl.render.Cylinder;
@@ -73,6 +74,7 @@ public class ChooseActivity extends Activity {
         add("圆锥", Cone.class);
         add("圆柱", Cylinder.class);
         add("球体", Ball.class);
+        add("带光源的球体",BallWithLight.class);
     }
 
     private void add(String showName,Class<?> clazz){
