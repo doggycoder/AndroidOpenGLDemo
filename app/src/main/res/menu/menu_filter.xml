@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/mDefault"
+        android:title="原图" />
+    <item android:id="@+id/mGray"
+        android:title="黑白" />
+    <item android:id="@+id/mCool"
+        android:title="冷色调" />
+    <item android:id="@+id/mWarm"
+        android:title="暖色调" />
+</menu>
