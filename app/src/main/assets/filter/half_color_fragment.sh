@@ -4,7 +4,9 @@ uniform sampler2D vTexture;
 uniform int vChangeType;
 uniform vec3 vChangeColor;
 uniform int vIsHalf;
-uniform mat4 vMatrix;
+uniform float uXY;
+
+varying vec4 gPosition;
 
 varying vec2 aCoordinate;
 varying vec4 aPos;
@@ -42,9 +44,9 @@ void main(){
             nColor/=13.0;
             gl_FragColor=nColor;
         }else if(vChangeType==4){
-            float dis=distance(aPos,vec4(vChangeColor.r,vChangeColor.g,0.0,0.0));
+            float dis=distance(vec2(gPosition.x,gPosition.y/uXY),vec2(vChangeColor.r,vChangeColor.g));
             if(dis<vChangeColor.b){
-                nColor=texture2D(vTexture,vec2(aCoordinate.x/2.0+vChangeColor.r/2.0,aCoordinate.y/2.0+vChangeColor.g/2.0));
+                nColor=texture2D(vTexture,vec2(aCoordinate.x/2.0+0.25,aCoordinate.y/2.0+0.25));
             }
             gl_FragColor=nColor;
         }else{

@@ -34,6 +34,7 @@ public abstract class AFilter implements GLSurfaceView.Renderer {
     private int glHCoordinate;
     private int glHMatrix;
     private int hIsHalf;
+    private int glHUxy;
     private Bitmap mBitmap;
 
     private FloatBuffer bPos;
@@ -41,6 +42,8 @@ public abstract class AFilter implements GLSurfaceView.Renderer {
 
     private int textureId;
     private boolean isHalf;
+
+    private float uXY;
 
     private String vertex;
     private String fragment;
@@ -100,6 +103,7 @@ public abstract class AFilter implements GLSurfaceView.Renderer {
         glHTexture=GLES20.glGetUniformLocation(mProgram,"vTexture");
         glHMatrix=GLES20.glGetUniformLocation(mProgram,"vMatrix");
         hIsHalf=GLES20.glGetUniformLocation(mProgram,"vIsHalf");
+        glHUxy=GLES20.glGetUniformLocation(mProgram,"uXY");
         onDrawCreatedSet(mProgram);
     }
 
@@ -111,21 +115,22 @@ public abstract class AFilter implements GLSurfaceView.Renderer {
         int h=mBitmap.getHeight();
         float sWH=w/(float)h;
         float sWidthHeight=width/(float)height;
+        uXY=sWidthHeight;
         if(width>height){
             if(sWH>sWidthHeight){
-                Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight*sWH,sWidthHeight*sWH, -1,1, 3, 7);
+                Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight*sWH,sWidthHeight*sWH, -1,1, 3, 5);
             }else{
-                Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight/sWH,sWidthHeight/sWH, -1,1, 3, 7);
+                Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight/sWH,sWidthHeight/sWH, -1,1, 3, 5);
             }
         }else{
             if(sWH>sWidthHeight){
-                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1/sWidthHeight*sWH, 1/sWidthHeight*sWH,3, 7);
+                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1/sWidthHeight*sWH, 1/sWidthHeight*sWH,3, 5);
             }else{
-                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -sWH/sWidthHeight, sWH/sWidthHeight,3, 7);
+                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -sWH/sWidthHeight, sWH/sWidthHeight,3, 5);
             }
         }
         //设置相机位置
-        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 7.0f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 5.0f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
         //计算变换矩阵
         Matrix.multiplyMM(mMVPMatrix,0,mProjectMatrix,0,mViewMatrix,0);
     }
@@ -136,6 +141,7 @@ public abstract class AFilter implements GLSurfaceView.Renderer {
         GLES20.glUseProgram(mProgram);
         onDrawSet();
         GLES20.glUniform1i(hIsHalf,isHalf?1:0);
+        GLES20.glUniform1f(glHUxy,uXY);
         GLES20.glUniformMatrix4fv(glHMatrix,1,false,mMVPMatrix,0);
         GLES20.glEnableVertexAttribArray(glHPosition);
         GLES20.glEnableVertexAttribArray(glHCoordinate);

@@ -43,7 +43,7 @@ public class ColorFilter extends AFilter {
         COOL(2,new float[]{0.0f,0.0f,0.1f}),
         WARM(2,new float[]{0.1f,0.1f,0.0f}),
         BLUR(3,new float[]{0.006f,0.004f,0.002f}),
-        MAGN(4,new float[]{0.0f,0.0f,0.2f});
+        MAGN(4,new float[]{0.0f,0.0f,0.4f});
 
 
         private int vChangeType;
