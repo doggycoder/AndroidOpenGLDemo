@@ -42,7 +42,7 @@ void main(){
             nColor/=13.0;
             gl_FragColor=nColor;
         }else if(vChangeType==4){
-            float dis=distance(vMatrix*aPos,vMatrix*vec4(vChangeColor.r,vChangeColor.g,0.0,0.0));
+            float dis=distance(aPos,vec4(vChangeColor.r,vChangeColor.g,0.0,0.0));
             if(dis<vChangeColor.b){
                 nColor=texture2D(vTexture,vec2(aCoordinate.x/2.0+vChangeColor.r/2.0,aCoordinate.y/2.0+vChangeColor.g/2.0));
             }
