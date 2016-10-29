@@ -4,6 +4,7 @@ uniform sampler2D vTexture;
 uniform int vChangeType;
 uniform vec3 vChangeColor;
 uniform int vIsHalf;
+uniform mat4 vMatrix;
 
 varying vec2 aCoordinate;
 varying vec4 aPos;
@@ -25,6 +26,27 @@ void main(){
             vec4 deltaColor=nColor+vec4(vChangeColor,0.0);
             modifyColor(deltaColor);
             gl_FragColor=deltaColor;
+        }else if(vChangeType==3){
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x-vChangeColor.r,aCoordinate.y-vChangeColor.r));
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x-vChangeColor.r,aCoordinate.y+vChangeColor.r));
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x+vChangeColor.r,aCoordinate.y-vChangeColor.r));
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x+vChangeColor.r,aCoordinate.y+vChangeColor.r));
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x-vChangeColor.g,aCoordinate.y-vChangeColor.g));
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x-vChangeColor.g,aCoordinate.y+vChangeColor.g));
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x+vChangeColor.g,aCoordinate.y-vChangeColor.g));
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x+vChangeColor.g,aCoordinate.y+vChangeColor.g));
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x-vChangeColor.b,aCoordinate.y-vChangeColor.b));
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x-vChangeColor.b,aCoordinate.y+vChangeColor.b));
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x+vChangeColor.b,aCoordinate.y-vChangeColor.b));
+            nColor+=texture2D(vTexture,vec2(aCoordinate.x+vChangeColor.b,aCoordinate.y+vChangeColor.b));
+            nColor/=13.0;
+            gl_FragColor=nColor;
+        }else if(vChangeType==4){
+            float dis=distance(vMatrix*aPos,vMatrix*vec4(vChangeColor.r,vChangeColor.g,0.0,0.0));
+            if(dis<vChangeColor.b){
+                nColor=texture2D(vTexture,vec2(aCoordinate.x/2.0+vChangeColor.r/2.0,aCoordinate.y/2.0+vChangeColor.g/2.0));
+            }
+            gl_FragColor=nColor;
         }else{
             gl_FragColor=nColor;
         }

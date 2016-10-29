@@ -8,4 +8,8 @@
         android:title="冷色调" />
     <item android:id="@+id/mWarm"
         android:title="暖色调" />
+    <item android:id="@+id/mBlur"
+        android:title="模糊" />
+    <item android:id="@+id/mMagn"
+        android:title="放大镜" />
 </menu>

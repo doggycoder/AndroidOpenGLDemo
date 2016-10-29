@@ -95,6 +95,13 @@ public class SGLViewActivity extends Activity implements PopupMenu.OnMenuItemCli
             case R.id.mWarm:
                 mGLView.setFilter(new ContrastColorFilter(this, ColorFilter.Filter.WARM));
                 break;
+            case R.id.mBlur:
+                mGLView.setFilter(new ContrastColorFilter(this, ColorFilter.Filter.BLUR));
+                break;
+            case R.id.mMagn:
+                mGLView.setFilter(new ContrastColorFilter(this, ColorFilter.Filter.MAGN));
+                break;
+
         }
         mGLView.getRender().getFilter().setHalf(isHalf);
         mGLView.requestRender();
