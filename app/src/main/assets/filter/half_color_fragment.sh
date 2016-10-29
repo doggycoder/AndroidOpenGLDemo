@@ -3,6 +3,7 @@ precision mediump float;
 uniform sampler2D vTexture;
 uniform int vChangeType;
 uniform vec3 vChangeColor;
+uniform int vIsHalf;
 
 varying vec2 aCoordinate;
 varying vec4 aPos;
@@ -16,7 +17,7 @@ void modifyColor(vec4 color){
 
 void main(){
     vec4 nColor=texture2D(vTexture,aCoordinate);
-    if(aPos.x>0.0){
+    if(aPos.x>0.0||vIsHalf==0){
         if(vChangeType==1){
             float c=nColor.r*vChangeColor.r+nColor.g*vChangeColor.g+nColor.b*vChangeColor.b;
             gl_FragColor=vec4(c,c,c,nColor.a);

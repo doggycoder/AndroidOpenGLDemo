@@ -10,11 +10,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pic_easy"
+            android:onClick="onClick"
             android:id="@+id/btChange" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pic_half"
+            android:onClick="onClick"
             android:id="@+id/btDealWith" />
     </LinearLayout>
     <edu.wuwang.opengl.image.SGLView

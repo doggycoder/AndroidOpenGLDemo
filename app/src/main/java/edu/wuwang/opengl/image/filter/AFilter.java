@@ -33,12 +33,14 @@ public abstract class AFilter implements GLSurfaceView.Renderer {
     private int glHTexture;
     private int glHCoordinate;
     private int glHMatrix;
+    private int hIsHalf;
     private Bitmap mBitmap;
 
     private FloatBuffer bPos;
     private FloatBuffer bCoord;
 
     private int textureId;
+    private boolean isHalf;
 
     private String vertex;
     private String fragment;
@@ -76,12 +78,12 @@ public abstract class AFilter implements GLSurfaceView.Renderer {
         bCoord.position(0);
     }
 
-    public void setImageBuffer(int[] buffer,int width,int height){
-        mBitmap= Bitmap.createBitmap(buffer,width,height, Bitmap.Config.RGB_565);
+    public void setHalf(boolean half){
+        this.isHalf=half;
     }
 
-    public void setScaleType(int type){
-
+    public void setImageBuffer(int[] buffer,int width,int height){
+        mBitmap= Bitmap.createBitmap(buffer,width,height, Bitmap.Config.RGB_565);
     }
 
     public void setBitmap(Bitmap bitmap){
@@ -97,6 +99,7 @@ public abstract class AFilter implements GLSurfaceView.Renderer {
         glHCoordinate=GLES20.glGetAttribLocation(mProgram,"vCoordinate");
         glHTexture=GLES20.glGetUniformLocation(mProgram,"vTexture");
         glHMatrix=GLES20.glGetUniformLocation(mProgram,"vMatrix");
+        hIsHalf=GLES20.glGetUniformLocation(mProgram,"vIsHalf");
         onDrawCreatedSet(mProgram);
     }
 
@@ -132,6 +135,7 @@ public abstract class AFilter implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT|GLES20.GL_DEPTH_BUFFER_BIT);
         GLES20.glUseProgram(mProgram);
         onDrawSet();
+        GLES20.glUniform1i(hIsHalf,isHalf?1:0);
         GLES20.glUniformMatrix4fv(glHMatrix,1,false,mMVPMatrix,0);
         GLES20.glEnableVertexAttribArray(glHPosition);
         GLES20.glEnableVertexAttribArray(glHCoordinate);

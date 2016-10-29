@@ -15,6 +15,7 @@ import android.util.AttributeSet;
 import java.io.IOException;
 
 import edu.wuwang.opengl.image.filter.AFilter;
+import edu.wuwang.opengl.image.filter.ColorFilter;
 
 /**
  * Description:
@@ -46,9 +47,12 @@ public class SGLView extends GLSurfaceView {
         }
     }
 
+    public SGLRender getRender(){
+        return render;
+    }
+
     public void setFilter(AFilter filter){
         render.setFilter(filter);
-        requestRender();
     }
 
 }
