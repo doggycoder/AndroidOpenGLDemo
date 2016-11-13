@@ -15,11 +15,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FGLViewActivity" >
+        <activity android:name=".render.FGLViewActivity" >
         </activity>
         <activity android:name=".ChooseActivity">
         </activity>
         <activity android:name=".image.SGLViewActivity">
+        </activity>
+        <activity android:name=".vary.VaryActivity">
         </activity>
     </application>
 

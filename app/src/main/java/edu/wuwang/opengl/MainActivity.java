@@ -1,13 +1,14 @@
 package edu.wuwang.opengl;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
 import edu.wuwang.opengl.image.SGLViewActivity;
+import edu.wuwang.opengl.render.FGLViewActivity;
+import edu.wuwang.opengl.vary.VaryActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btTexture:
                 startActivity(new Intent(this,SGLViewActivity.class));
+                break;
+            case R.id.btVary:
+                startActivity(new Intent(this, VaryActivity.class));
                 break;
         }
     }

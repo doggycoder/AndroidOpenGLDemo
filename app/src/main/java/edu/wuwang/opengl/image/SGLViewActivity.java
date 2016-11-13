@@ -10,13 +10,16 @@ import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
+import android.view.ContextMenu;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import edu.wuwang.opengl.BaseActivity;
 import edu.wuwang.opengl.R;
 import edu.wuwang.opengl.image.filter.ColorFilter;
 import edu.wuwang.opengl.image.filter.ContrastColorFilter;
@@ -24,47 +27,16 @@ import edu.wuwang.opengl.image.filter.ContrastColorFilter;
 /**
  * Description:
  */
-public class SGLViewActivity extends Activity implements PopupMenu.OnMenuItemClickListener {
+public class SGLViewActivity extends BaseActivity{
 
     private SGLView mGLView;
-    private PopupMenu mFilterMenu;
     private boolean isHalf=false;
-    private Button btChange;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture);
         mGLView= (SGLView) findViewById(R.id.glView);
-        btChange= (Button) findViewById(R.id.btChange);
-    }
-
-    private void showMenu(){
-        if(mFilterMenu==null){
-            mFilterMenu=new PopupMenu(this,findViewById(R.id.btChange));
-            getMenuInflater().inflate(R.menu.menu_filter,mFilterMenu.getMenu());
-            mFilterMenu.setOnMenuItemClickListener(this);
-        }
-        mFilterMenu.show();
-    }
-
-    public void onClick(View view){
-        switch (view.getId()){
-            case R.id.btChange:
-                showMenu();
-                break;
-            case R.id.btDealWith:
-                isHalf=!isHalf;
-                if(isHalf){
-                    ((TextView)view).setText("处理一半");
-                }else{
-                    ((TextView)view).setText("全部处理");
-                }
-                mGLView.getRender().getFilter().setHalf(isHalf);
-                mGLView.getRender().refresh();
-                mGLView.requestRender();
-                break;
-        }
     }
 
     @Override
@@ -80,9 +52,23 @@ public class SGLViewActivity extends Activity implements PopupMenu.OnMenuItemCli
     }
 
     @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        btChange.setText(item.getTitle());
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_filter,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.mDeal:
+                isHalf=!isHalf;
+                if(isHalf){
+                    item.setTitle("处理一半");
+                }else{
+                    item.setTitle("全部处理");
+                }
+                mGLView.getRender().refresh();
+                break;
             case R.id.mDefault:
                 mGLView.setFilter(new ContrastColorFilter(this, ColorFilter.Filter.NONE));
                 break;
@@ -105,6 +91,7 @@ public class SGLViewActivity extends Activity implements PopupMenu.OnMenuItemCli
         }
         mGLView.getRender().getFilter().setHalf(isHalf);
         mGLView.requestRender();
-        return false;
+        return super.onOptionsItemSelected(item);
     }
+
 }

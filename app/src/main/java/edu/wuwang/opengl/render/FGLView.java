@@ -4,7 +4,7 @@
  * 
  * Created by Wuwang on 2016/9/29
  */
-package edu.wuwang.opengl;
+package edu.wuwang.opengl.render;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;

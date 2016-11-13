@@ -4,23 +4,22 @@
  * 
  * Created by Wuwang on 2016/9/30
  */
-package edu.wuwang.opengl;
+package edu.wuwang.opengl.render;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.HashMap;
-
-import edu.wuwang.opengl.render.Shape;
+import edu.wuwang.opengl.ChooseActivity;
+import edu.wuwang.opengl.R;
 
 /**
  * Description:
  */
-public class FGLViewActivity extends Activity implements View.OnClickListener {
+public class FGLViewActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQ_CHOOSE=0x0101;
 
