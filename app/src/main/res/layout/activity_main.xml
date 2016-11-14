@@ -23,4 +23,10 @@
         android:text="@string/type_vary"
         android:id="@+id/btVary"
         android:onClick="onClick" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/type_camera"
+        android:id="@+id/btCamera"
+        android:onClick="onClick" />
 </LinearLayout>

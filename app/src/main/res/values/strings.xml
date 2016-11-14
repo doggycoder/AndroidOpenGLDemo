@@ -5,6 +5,7 @@
     <string name="type_draw">绘制形体</string>
     <string name="type_texture">图片处理</string>
     <string name="type_vary">图形变换</string>
+    <string name="type_camera">相机</string>
 
     <string name="pic_easy">原图</string>
     <string name="pic_half">全部处理</string>
