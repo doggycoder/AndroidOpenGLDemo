@@ -16,6 +16,7 @@ import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -24,7 +25,7 @@ import android.util.Log;
  */
 public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer {
 
-    private KitkatCamera mCamera;
+    private KitkatCamera mCamera2;
     private CameraDrawer mCameraDrawer;
     private int cameraId=1;
 
@@ -43,35 +44,36 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
         setEGLContextClientVersion(2);
         setRenderer(this);
         setRenderMode(RENDERMODE_WHEN_DIRTY);
-        mCamera=new KitkatCamera();
+        mCamera2=new KitkatCamera();
+        mCameraDrawer=new CameraDrawer(getResources());
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+        mCameraDrawer.onSurfaceCreated(gl,config);
         if(mRunnable!=null){
             mRunnable.run();
             mRunnable=null;
         }
-        Log.e("wuwang","cameraId--"+cameraId);
-        mCamera.open(cameraId);
-        Point point=mCamera.getPreviewSize();
-        mCameraDrawer=new CameraDrawer(getResources());
-        mCameraDrawer.setPreviewSize(point.x,point.y);
-        mCamera.setPreviewTexture(mCameraDrawer.getSurfaceTexture());
+        mCamera2.open(cameraId);
+        mCameraDrawer.setCameraId(cameraId);
+        Point point=mCamera2.getPreviewSize();
+        mCameraDrawer.setDataSize(point.x,point.y);
+        mCamera2.setPreviewTexture(mCameraDrawer.getSurfaceTexture());
         mCameraDrawer.getSurfaceTexture().setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
             @Override
             public void onFrameAvailable(SurfaceTexture surfaceTexture) {
                 requestRender();
             }
         });
-        mCamera.preview();
+        mCamera2.preview();
     }
 
     public void switchCamera(){
         mRunnable=new Runnable() {
             @Override
             public void run() {
-                mCamera.close();
+                mCamera2.close();
                 cameraId=cameraId==1?0:1;
             }
         };
@@ -81,20 +83,18 @@ public class CameraView extends GLSurfaceView implements GLSurfaceView.Renderer 
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        mCameraDrawer.calculateMatrix(width,height,cameraId==1,1);
+        mCameraDrawer.setViewSize(width,height);
         GLES20.glViewport(0,0,width,height);
     }
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        GLES20.glClearColor(1.0f,1.0f,1.0f,1.0f);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT|GLES20.GL_DEPTH_BUFFER_BIT);
-        mCameraDrawer.draw(true,true);
+        mCameraDrawer.onDrawFrame(gl);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mCamera.close();
+        mCamera2.close();
     }
 }
