@@ -45,6 +45,9 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer {
     protected int mAPosition;
     protected int mUTexture;
 
+    public int width;
+    public int height;
+
     private float[] matrix=Gl2Utils.getOriginalMatrix();
     private int textureId;
     private int textureIndex;
@@ -52,9 +55,25 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer {
     protected FloatBuffer mVerBuffer;
     protected FloatBuffer mTexBuffer;
 
-    public BaseFilter(Resources res){
+    private String vertexRes=null;
+    private String fragmentRes=null;
+
+    private String vertex=null;
+    private String fragment=null;
+
+    private int textureTarget=GLES20.GL_TEXTURE_2D;
+
+    protected BaseFilter(Resources res,String vertexRes,String fragmentRes){
         this.mRes=res;
-        initBuffer();
+        this.vertexRes=vertexRes;
+        this.fragmentRes=fragmentRes;
+        onBufferInit();
+    }
+
+    protected BaseFilter(String vertex,String fragment){
+        this.vertex=vertex;
+        this.fragment=fragment;
+        onBufferInit();
     }
 
     public void createProgram(String vertex,String fragment){
@@ -71,7 +90,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer {
         createProgram(vertex,fragment);
     }
 
-    protected void initBuffer(){
+    protected void onBufferInit(){
         ByteBuffer a=ByteBuffer.allocateDirect(32);
         a.order(ByteOrder.nativeOrder());
         mVerBuffer=a.asFloatBuffer();
@@ -96,6 +115,10 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer {
         this.textureId=textureId;
     }
 
+    public void setTextureTarget(int target){
+        this.textureTarget=target;
+    }
+
     public int getTextureId(){
         return textureId;
     }
@@ -108,9 +131,18 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer {
         return textureIndex;
     }
 
-    protected abstract void onCreate();
+    protected void onCreate(){
+        if(vertexRes!=null&&fragmentRes!=null){
+            createProgramByAssets(vertexRes,fragmentRes);
+        }else if(vertex!=null&&fragment!=null){
+            createProgram(vertex,fragment);
+        }
+    }
 
-    protected abstract void onSizeChanged(int width,int height);
+    protected void onSizeChanged(int width,int height){
+        this.width=width;
+        this.height=height;
+    }
 
     protected void onClear(){
         GLES20.glClearColor(1.0f,1.0f,1.0f,1.0f);
@@ -123,7 +155,7 @@ public abstract class BaseFilter implements GLSurfaceView.Renderer {
 
     protected void onBindTexture(){
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0+getTextureIndex());
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,getTextureId());
+        GLES20.glBindTexture(textureTarget,getTextureId());
         GLES20.glUniform1i(mUTexture,getTextureIndex());
     }
 

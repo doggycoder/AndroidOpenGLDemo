@@ -12,11 +12,16 @@ public class GpuView extends GLSurfaceView {
 
 
     public GpuView(Context context) {
-        super(context);
+        this(context,null);
     }
 
     public GpuView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
+    }
+
+    protected void init(){
+
     }
 
 }
