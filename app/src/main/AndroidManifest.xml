@@ -38,6 +38,8 @@
         </activity>
         <activity android:name=".camera.CameraActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".etc.ZipActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

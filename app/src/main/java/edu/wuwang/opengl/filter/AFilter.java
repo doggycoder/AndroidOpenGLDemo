@@ -104,7 +104,7 @@ public abstract class AFilter {
         onCreate();
     }
 
-    public final void draw(){
+    public void draw(){
         onClear();
         GLES20.glUseProgram(mProgram);
         onSetExpandData();
