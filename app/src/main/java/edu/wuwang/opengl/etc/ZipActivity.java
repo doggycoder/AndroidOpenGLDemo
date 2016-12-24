@@ -31,14 +31,14 @@ public class ZipActivity extends AppCompatActivity {
 //            .getAbsolutePath());
         setContentView(R.layout.activity_zip);
         mAniView= (ZipAniView)findViewById(R.id.mAni);
-        mAniView.setScaleType(Gl2Utils.TYPE_FITSTART);
+        mAniView.setScaleType(Gl2Utils.TYPE_CENTERINSIDE);
         mAniView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!mAniView.isPlay()){
 //                    File f=new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
 //                        "firezip/fire.zip");
-                    mAniView.setAnimation(nowMenu,40);
+                    mAniView.setAnimation(nowMenu,50);
                     mAniView.start();
                 }
             }
@@ -50,7 +50,7 @@ public class ZipActivity extends AppCompatActivity {
                     if(!mAniView.isPlay()){
 //                    File f=new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
 //                        "firezip/fire.zip");
-                        mAniView.setAnimation(nowMenu,40);
+                        mAniView.setAnimation(nowMenu,50);
                         mAniView.start();
                     }
                 }
