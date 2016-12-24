@@ -40,6 +40,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".etc.ZipActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".fbo.FBOActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -7,6 +7,7 @@
     <string name="type_vary">图形变换</string>
     <string name="type_camera">相机</string>
     <string name="type_animation">压缩纹理动画</string>
+    <string name="type_fbo">FBO使用</string>
 
     <string name="pic_easy">原图</string>
     <string name="pic_half">全部处理</string>

@@ -26,9 +26,6 @@ public class ZipActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        AssetsUtils.copyFileFromAssets(getAssets(),"effect",getExternalFilesDir(Environment
-//            .DIRECTORY_PICTURES)
-//            .getAbsolutePath());
         setContentView(R.layout.activity_zip);
         mAniView= (ZipAniView)findViewById(R.id.mAni);
         mAniView.setScaleType(Gl2Utils.TYPE_CENTERINSIDE);
@@ -36,8 +33,6 @@ public class ZipActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!mAniView.isPlay()){
-//                    File f=new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-//                        "firezip/fire.zip");
                     mAniView.setAnimation(nowMenu,50);
                     mAniView.start();
                 }
@@ -48,8 +43,6 @@ public class ZipActivity extends AppCompatActivity {
             public void onStateChanged(int lastState, int nowState) {
                 if(nowState==STOP){
                     if(!mAniView.isPlay()){
-//                    File f=new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-//                        "firezip/fire.zip");
                         mAniView.setAnimation(nowMenu,50);
                         mAniView.start();
                     }
