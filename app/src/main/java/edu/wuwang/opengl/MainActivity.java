@@ -8,6 +8,7 @@ import edu.wuwang.opengl.camera.CameraActivity;
 import edu.wuwang.opengl.etc.ZipActivity;
 import edu.wuwang.opengl.fbo.FBOActivity;
 import edu.wuwang.opengl.image.SGLViewActivity;
+import edu.wuwang.opengl.obj.ObjLoadActivity;
 import edu.wuwang.opengl.render.FGLViewActivity;
 import edu.wuwang.opengl.vary.VaryActivity;
 
@@ -38,6 +39,9 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.btFbo:
                 startActivity(new Intent(this, FBOActivity.class));
+                break;
+            case R.id.btObj:
+                startActivity(new Intent(this, ObjLoadActivity.class));
                 break;
         }
     }

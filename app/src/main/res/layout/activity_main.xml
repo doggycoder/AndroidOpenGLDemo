@@ -41,4 +41,10 @@
         android:text="@string/type_fbo"
         android:id="@+id/btFbo"
         android:onClick="onClick" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/type_obj"
+        android:id="@+id/btObj"
+        android:onClick="onClick" />
 </LinearLayout>

@@ -42,6 +42,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".fbo.FBOActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".obj.ObjLoadActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
