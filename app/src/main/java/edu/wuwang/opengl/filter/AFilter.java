@@ -116,6 +116,10 @@ public abstract class AFilter {
         this.matrix=matrix;
     }
 
+    public float[] getMatrix(){
+        return matrix;
+    }
+
     public final void setTextureType(int type){
         this.textureType=type;
     }

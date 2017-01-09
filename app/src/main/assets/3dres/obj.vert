@@ -21,8 +21,7 @@ void main(){
     gl_Position = vMatrix*vec4(vPosition,1);
     textureCoordinate = vCoord;
 
-
    vec4 at=vec4(1.0,1.0,1.0,1.0);   //光照强度
    vec3 pos=vec3(200.0,200.0,200.0);      //光照位置
-   vDiffuse=pointLight(normalize(vPosition),pos,at);
+   vDiffuse=pointLight(vNormal,pos,at);
 }

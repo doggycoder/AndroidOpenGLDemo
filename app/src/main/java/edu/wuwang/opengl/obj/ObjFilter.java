@@ -14,6 +14,7 @@ public class ObjFilter extends AFilter {
     private int vertCount;
 
     private int mHNormal;
+    private ObjReader.Obj3D obj;
 
     public ObjFilter(Resources mRes) {
         super(mRes);
@@ -22,6 +23,7 @@ public class ObjFilter extends AFilter {
     public void setObj3D(ObjReader.Obj3D obj){
         mVerBuffer=obj.vert;
         vertCount=obj.vertCount;
+        this.obj=obj;
     }
 
     @Override
@@ -35,8 +37,6 @@ public class ObjFilter extends AFilter {
         mHNormal=GLES20.glGetAttribLocation(mProgram,"vNormal");
         //打开深度检测
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        //打开背面剪裁
-        GLES20.glEnable(GLES20.GL_CULL_FACE);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class ObjFilter extends AFilter {
         GLES20.glEnableVertexAttribArray(mHPosition);
         GLES20.glVertexAttribPointer(mHPosition,3, GLES20.GL_FLOAT, false, 3*4,mVerBuffer);
         GLES20.glEnableVertexAttribArray(mHNormal);
-        GLES20.glVertexAttribPointer(mHNormal,3, GLES20.GL_FLOAT, false, 3*4,mVerBuffer);
+        GLES20.glVertexAttribPointer(mHNormal,3, GLES20.GL_FLOAT, false, 3*4,obj.vertNorl);
 //        GLES20.glEnableVertexAttribArray(mHCoord);
 //        GLES20.glVertexAttribPointer(mHCoord, 2, GLES20.GL_FLOAT, false, 0, mTexBuffer);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES,0,vertCount);
