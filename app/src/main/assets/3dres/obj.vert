@@ -22,6 +22,6 @@ void main(){
     textureCoordinate = vCoord;
 
    vec4 at=vec4(1.0,1.0,1.0,1.0);   //光照强度
-   vec3 pos=vec3(200.0,200.0,200.0);      //光照位置
+   vec3 pos=vec3(50.0,200.0,50.0);      //光照位置
    vDiffuse=pointLight(vNormal,pos,at);
 }
