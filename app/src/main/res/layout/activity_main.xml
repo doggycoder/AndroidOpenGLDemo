@@ -44,6 +44,12 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/type_egl"
+        android:id="@+id/btEgl"
+        android:onClick="onClick" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/type_obj"
         android:id="@+id/btObj"
         android:onClick="onClick" />

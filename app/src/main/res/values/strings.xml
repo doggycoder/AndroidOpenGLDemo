@@ -8,6 +8,7 @@
     <string name="type_camera">相机</string>
     <string name="type_animation">压缩纹理动画</string>
     <string name="type_fbo">FBO使用</string>
+    <string name="type_egl">EGL后台处理图片</string>
     <string name="type_obj">3D Obj模型</string>
 
     <string name="pic_easy">原图</string>

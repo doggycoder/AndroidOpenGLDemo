@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import edu.wuwang.opengl.camera.CameraActivity;
+import edu.wuwang.opengl.egl.EGLBackEnvActivity;
 import edu.wuwang.opengl.etc.ZipActivity;
 import edu.wuwang.opengl.fbo.FBOActivity;
 import edu.wuwang.opengl.image.SGLViewActivity;
@@ -39,6 +40,9 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.btFbo:
                 startActivity(new Intent(this, FBOActivity.class));
+                break;
+            case R.id.btEgl:
+                startActivity(new Intent(this, EGLBackEnvActivity.class));
                 break;
             case R.id.btObj:
                 startActivity(new Intent(this, ObjLoadActivity.class));

@@ -104,6 +104,10 @@ public abstract class AFilter {
         onCreate();
     }
 
+    public final void size(int width,int height){
+        onSizeChanged(width,height);
+    }
+
     public void draw(){
         onClear();
         GLES20.glUseProgram(mProgram);
