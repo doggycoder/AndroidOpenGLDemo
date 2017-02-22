@@ -14,15 +14,13 @@ public class ObjFilter extends AFilter {
     private int vertCount;
 
     private int mHNormal;
-    private ObjReader.Obj3D obj;
+    private Obj3D obj;
 
     public ObjFilter(Resources mRes) {
         super(mRes);
     }
 
-    public void setObj3D(ObjReader.Obj3D obj){
-        mVerBuffer=obj.vert;
-        vertCount=obj.vertCount;
+    public void setObj3D(Obj3D obj){
         this.obj=obj;
     }
 
@@ -47,12 +45,12 @@ public class ObjFilter extends AFilter {
     @Override
     protected void onDraw() {
         GLES20.glEnableVertexAttribArray(mHPosition);
-        GLES20.glVertexAttribPointer(mHPosition,3, GLES20.GL_FLOAT, false, 3*4,mVerBuffer);
+        GLES20.glVertexAttribPointer(mHPosition,3, GLES20.GL_FLOAT, false, 3*4,obj.vert);
         GLES20.glEnableVertexAttribArray(mHNormal);
         GLES20.glVertexAttribPointer(mHNormal,3, GLES20.GL_FLOAT, false, 3*4,obj.vertNorl);
 //        GLES20.glEnableVertexAttribArray(mHCoord);
 //        GLES20.glVertexAttribPointer(mHCoord, 2, GLES20.GL_FLOAT, false, 0, mTexBuffer);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES,0,vertCount);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES,0,obj.vertCount);
         GLES20.glDisableVertexAttribArray(mHPosition);
         GLES20.glDisableVertexAttribArray(mHNormal);
 //        GLES20.glDisableVertexAttribArray(mHCoord);

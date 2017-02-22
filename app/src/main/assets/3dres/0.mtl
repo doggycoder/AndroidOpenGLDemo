@@ -1,0 +1,63 @@
+newmtl BodyA00
+illum 2
+Kd 0.8 0.8 0.8
+Ka 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+Ke 0.0 0.0 0.0
+Ns 0.0
+map_Kd BodyA1_0.png
+
+newmtl BodyA01
+illum 2
+Kd 0.8 0.8 0.8
+Ka 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+Ke 0.0 0.0 0.0
+Ns 0.0
+map_Kd BodyA1_0.png
+
+newmtl BodyA02
+illum 2
+Kd 0.8 0.8 0.8
+Ka 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+Ke 0.0 0.0 0.0
+Ns 0.0
+map_Kd BodyA1_0.png
+
+newmtl BodyB
+illum 2
+Kd 0.8 0.8 0.8
+Ka 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+Ke 0.0 0.0 0.0
+Ns 0.0
+map_Kd BodyB1_0.png
+
+newmtl Eye00
+illum 2
+Kd 0.8 0.8 0.8
+Ka 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+Ke 0.0 0.0 0.0
+Ns 0.0
+map_Kd EyeA1_0.png
+
+newmtl Eye01
+illum 2
+Kd 0.8 0.8 0.8
+Ka 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+Ke 0.0 0.0 0.0
+Ns 0.0
+map_Kd EyeA1_0.png
+
+newmtl Eye02
+illum 2
+Kd 0.8 0.8 0.8
+Ka 0.8 0.8 0.8
+Ks 0.0 0.0 0.0
+Ke 0.0 0.0 0.0
+Ns 0.0
+map_Kd EyeA1_0.png
+

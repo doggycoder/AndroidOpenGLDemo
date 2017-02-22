@@ -1,6 +1,10 @@
 package edu.wuwang.opengl.obj;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
@@ -8,6 +12,8 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by wuwang on 2017/1/7
@@ -76,38 +82,153 @@ public class ObjReader {
                     }
                 }
             }
-
-            //生成顶点数组
-            int size=alvResult.size();
-            float[] vXYZ=new float[size];
-            for(int i=0;i<size;i++){
-                vXYZ[i]=alvResult.get(i);
-            }
-            ByteBuffer byteBuffer=ByteBuffer.allocateDirect(4*size);
-            byteBuffer.order(ByteOrder.nativeOrder());
-            obj3D.vert=byteBuffer.asFloatBuffer();
-            obj3D.vert.put(vXYZ);
-            obj3D.vert.position(0);
-            obj3D.vertCount=size/3;
-            int vbSize=norlArr.size();
-            float[] vbArr=new float[size];
-            for(int i=0;i<size;i++){
-                vbArr[i]=norlArr.get(i);
-            }
-            ByteBuffer vb=ByteBuffer.allocateDirect(4*vbSize);
-            vb.order(ByteOrder.nativeOrder());
-            obj3D.vertNorl=vb.asFloatBuffer();
-            obj3D.vertNorl.put(vbArr);
-            obj3D.vertNorl.position(0);
+           obj3D.setVert(alvResult);
+           obj3D.setVertNorl(norlArr);
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    public static class Obj3D{
-        public FloatBuffer vert;
-        public int vertCount;
-        public FloatBuffer vertNorl;
+    public static List<Obj3D> readMultiObj(Context context,String file){
+        List<Obj3D> mObjs=new ArrayList<>();
+        boolean isAssets;
+        ArrayList<Float> oVs=new ArrayList<Float>();//原始顶点坐标列表
+        ArrayList<Float> oVNs=new ArrayList<>();    //原始顶点法线列表
+        ArrayList<Float> oFVs=new ArrayList<>();     //面顶点
+        ArrayList<Float> oFVTs=new ArrayList<>();
+        HashMap<String,MtlInfo> mTls=null;
+        Obj3D mObj=null;
+        try{
+            String parent;
+            InputStream inputStream;
+            if (file.startsWith("assets/")){
+                isAssets=true;
+                String path=file.substring(7);
+                parent=path.substring(0,path.lastIndexOf("/")+1);
+                inputStream=context.getAssets().open(path);
+                Log.e("obj",parent);
+            }else{
+                isAssets=false;
+                parent=file.substring(0,file.lastIndexOf("/")+1);
+                inputStream=new FileInputStream(file);
+            }
+            InputStreamReader isr=new InputStreamReader(inputStream);
+            BufferedReader br=new BufferedReader(isr);
+            String temps;
+            while((temps=br.readLine())!=null)
+            {
+                if("".equals(temps)){
+                    if(mObj!=null){
+                        mObj.setVert(oFVs);
+                        mObj.setVertNorl(oFVTs);
+                        mObj=null;
+                        Log.e("obj","size:"+oFVs.size()+"/"+oFVTs.size());
+                        oFVs.clear();
+                        oFVTs.clear();
+                    }
+                }else{
+                    String[] tempsa=temps.split("[ ]+");
+                    switch (tempsa[0].trim()){
+                        case "mtllib":  //材质
+                            InputStream stream;
+                            if (isAssets){
+                                stream=context.getAssets().open(parent+tempsa[1]);
+                            }else{
+                                stream=new FileInputStream(parent+tempsa[1]);
+                            }
+                            mTls=readMtl(stream);
+                            break;
+                        case "usemtl":  //采用纹理
+                            mObj=new Obj3D();
+                            mObj.mtl=mTls.get(tempsa[1]);       //获取当前
+                            mObjs.add(mObj);
+                            Log.e("obj","add obj"+mObj.mtl.newmtl);
+                            break;
+                        case "v":       //原始顶点
+                            read(tempsa,oVs);
+                            break;
+                        case "vn":      //原始顶点法线
+                            read(tempsa,oVNs);
+                            break;
+                        case "f":
+                            for (int i=1;i<tempsa.length;i++){
+                                String[] fs=tempsa[i].split("/");
+                                //顶点索引
+                                int index=Integer.parseInt(fs[0])-1;
+                                oFVs.add(oVs.get(index*3));
+                                oFVs.add(oVs.get(index*3+1));
+                                oFVs.add(oVs.get(index*3+2));
+                                //TODO 贴图
+                                //法线索引
+                                index=Integer.parseInt(fs[2])-1;
+                                oFVTs.add(oVNs.get(index*3));
+                                oFVTs.add(oVNs.get(index*3+1));
+                                oFVTs.add(oVNs.get(index*3+2));
+                            }
+                            break;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return mObjs;
+    }
+
+    public static HashMap<String,MtlInfo> readMtl(InputStream stream){
+        HashMap<String,MtlInfo> map=new HashMap<>();
+        try{
+            InputStreamReader isr=new InputStreamReader(stream);
+            BufferedReader br=new BufferedReader(isr);
+            String temps;
+            MtlInfo mtlInfo=new MtlInfo();
+            while((temps=br.readLine())!=null)
+            {
+                String[] tempsa=temps.split("[ ]+");
+                switch (tempsa[0].trim()){
+                    case "newmtl":  //材质
+                        mtlInfo=new MtlInfo();
+                        mtlInfo.newmtl=tempsa[1];
+                        map.put(tempsa[1],mtlInfo);
+                        break;
+                    case "illum":       //原始顶点
+                        mtlInfo.illum=Integer.parseInt(tempsa[1]);
+                        break;
+                    case "Kd":      //原始顶点法线
+                        read(tempsa,mtlInfo.Kd);
+                        break;
+                    case "Ka":
+                        read(tempsa,mtlInfo.Ka);
+                        break;
+                    case "Ke":
+                        read(tempsa,mtlInfo.Ke);
+                        break;
+                    case "Ks":
+                        read(tempsa,mtlInfo.Ks);
+                        break;
+                    case "Ns":
+                        mtlInfo.Ns=Float.parseFloat(tempsa[1]);
+                    case "map_Kd":
+                        mtlInfo.textureName=tempsa[1];
+                        break;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    private static void read(String[] value,ArrayList<Float> list){
+        for (int i=1;i<value.length;i++){
+            list.add(Float.parseFloat(value[i]));
+        }
+    }
+
+    private static void read(String[] value,float[] fv){
+        for (int i=1;i<value.length&&i<fv.length+1;i++){
+            fv[i-1]=Float.parseFloat(value[i]);
+        }
     }
 
 }
