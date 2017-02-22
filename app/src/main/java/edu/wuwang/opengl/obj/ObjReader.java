@@ -94,7 +94,9 @@ public class ObjReader {
         boolean isAssets;
         ArrayList<Float> oVs=new ArrayList<Float>();//原始顶点坐标列表
         ArrayList<Float> oVNs=new ArrayList<>();    //原始顶点法线列表
+        ArrayList<Float> oVTs=new ArrayList<>();    //原始贴图坐标列表
         ArrayList<Float> oFVs=new ArrayList<>();     //面顶点
+        ArrayList<Float> oFVNs=new ArrayList<>();
         ArrayList<Float> oFVTs=new ArrayList<>();
         HashMap<String,MtlInfo> mTls=null;
         Obj3D mObj=null;
@@ -120,11 +122,11 @@ public class ObjReader {
                 if("".equals(temps)){
                     if(mObj!=null){
                         mObj.setVert(oFVs);
-                        mObj.setVertNorl(oFVTs);
+                        mObj.setVertNorl(oFVNs);
                         mObj=null;
-                        Log.e("obj","size:"+oFVs.size()+"/"+oFVTs.size());
+                        Log.e("obj","size:"+oFVs.size()+"/"+oFVNs.size());
                         oFVs.clear();
-                        oFVTs.clear();
+                        oFVNs.clear();
                     }
                 }else{
                     String[] tempsa=temps.split("[ ]+");
@@ -142,13 +144,16 @@ public class ObjReader {
                             mObj=new Obj3D();
                             mObj.mtl=mTls.get(tempsa[1]);       //获取当前
                             mObjs.add(mObj);
-                            Log.e("obj","add obj"+mObj.mtl.newmtl);
+                            Log.e("obj","add obj "+mObj.mtl.newmtl);
                             break;
                         case "v":       //原始顶点
                             read(tempsa,oVs);
                             break;
                         case "vn":      //原始顶点法线
                             read(tempsa,oVNs);
+                            break;
+                        case "vt":
+                            read(tempsa,oVTs);
                             break;
                         case "f":
                             for (int i=1;i<tempsa.length;i++){
@@ -158,12 +163,15 @@ public class ObjReader {
                                 oFVs.add(oVs.get(index*3));
                                 oFVs.add(oVs.get(index*3+1));
                                 oFVs.add(oVs.get(index*3+2));
-                                //TODO 贴图
+                                //贴图
+                                index=Integer.parseInt(fs[1])-1;
+                                oFVTs.add(oVTs.get(index*2));
+                                oFVTs.add(oVTs.get(index*2+1));
                                 //法线索引
                                 index=Integer.parseInt(fs[2])-1;
-                                oFVTs.add(oVNs.get(index*3));
-                                oFVTs.add(oVNs.get(index*3+1));
-                                oFVTs.add(oVNs.get(index*3+2));
+                                oFVNs.add(oVNs.get(index*3));
+                                oFVNs.add(oVNs.get(index*3+1));
+                                oFVNs.add(oVNs.get(index*3+2));
                             }
                             break;
                     }

@@ -9,13 +9,12 @@ import android.opengl.GLUtils;
 import java.io.IOException;
 
 import edu.wuwang.opengl.filter.AFilter;
-import edu.wuwang.opengl.utils.Gl2Utils;
 
 /**
  * Created by wuwang on 2017/1/8
  */
 
-public class ObjFilter extends AFilter {
+public class ObjFilter2 extends AFilter {
 
     private int vertCount;
 
@@ -24,7 +23,7 @@ public class ObjFilter extends AFilter {
 
     private int textureId;
 
-    public ObjFilter(Resources mRes) {
+    public ObjFilter2(Resources mRes) {
         super(mRes);
     }
 
@@ -39,7 +38,7 @@ public class ObjFilter extends AFilter {
 
     @Override
     protected void onCreate() {
-        createProgramByAssetsFile("3dres/obj.vert","3dres/obj.frag");
+        createProgramByAssetsFile("3dres/obj2.vert","3dres/obj2.frag");
         mHNormal=GLES20.glGetAttribLocation(mProgram,"vNormal");
         //打开深度检测
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);

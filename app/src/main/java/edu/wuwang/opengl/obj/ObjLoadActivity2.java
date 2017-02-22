@@ -23,7 +23,7 @@ import edu.wuwang.opengl.utils.Gl2Utils;
 public class ObjLoadActivity2 extends AppCompatActivity {
 
     private GLSurfaceView mGLView;
-    private List<ObjFilter> filters;
+    private List<ObjFilter2> filters;
 
 
     @Override
@@ -35,21 +35,21 @@ public class ObjLoadActivity2 extends AppCompatActivity {
         List<Obj3D> model=ObjReader.readMultiObj(this,"assets/3dres/0.obj");
         filters=new ArrayList<>();
         for (int i=0;i<model.size();i++){
-            ObjFilter f=new ObjFilter(getResources());
+            ObjFilter2 f=new ObjFilter2(getResources());
             f.setObj3D(model.get(i));
             filters.add(f);
         }
         mGLView.setRenderer(new GLSurfaceView.Renderer() {
             @Override
             public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-                for (ObjFilter f:filters){
+                for (ObjFilter2 f:filters){
                     f.create();
                 }
             }
 
             @Override
             public void onSurfaceChanged(GL10 gl, int width, int height) {
-                for (ObjFilter f:filters){
+                for (ObjFilter2 f:filters){
                     f.onSizeChanged(width, height);
                     float[] matrix= Gl2Utils.getOriginalMatrix();
                     Matrix.scaleM(matrix,0,0.1f,0.1f*width/height,0.1f);
@@ -59,7 +59,7 @@ public class ObjLoadActivity2 extends AppCompatActivity {
 
             @Override
             public void onDrawFrame(GL10 gl) {
-                for (ObjFilter f:filters){
+                for (ObjFilter2 f:filters){
                     Matrix.rotateM(f.getMatrix(),0,0.3f,0,1,0);
                     f.draw();
                 }
