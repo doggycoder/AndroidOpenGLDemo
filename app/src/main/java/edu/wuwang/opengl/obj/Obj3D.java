@@ -19,6 +19,9 @@ public class Obj3D {
 
     public MtlInfo mtl;
 
+    public int textureSMode;
+    public int textureTMode;
+
     public void setVert(ArrayList<Float> data){
         int size=data.size();
         ByteBuffer buffer=ByteBuffer.allocateDirect(size*4);
@@ -47,8 +50,11 @@ public class Obj3D {
         ByteBuffer buffer=ByteBuffer.allocateDirect(size*4);
         buffer.order(ByteOrder.nativeOrder());
         vertTexture=buffer.asFloatBuffer();
-        for (int i=0;i<size;i++){
+        for (int i=0;i<size;){
             vertTexture.put(data.get(i));
+            i++;
+            vertTexture.put(data.get(i));
+            i++;
         }
         vertTexture.position(0);
     }

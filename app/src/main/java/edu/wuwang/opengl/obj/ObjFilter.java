@@ -45,7 +45,7 @@ public class ObjFilter extends AFilter {
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         if(obj.vertTexture!=null){
             try {
-                textureId=createTexture(BitmapFactory.decodeStream(mRes.getAssets().open("3dres/"+obj.mtl.textureName)));
+                textureId=createTexture(BitmapFactory.decodeStream(mRes.getAssets().open("3dres/"+obj.mtl.map_Kd)));
                 setTextureId(textureId);
             } catch (IOException e) {
                 e.printStackTrace();

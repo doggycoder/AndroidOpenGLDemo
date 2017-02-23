@@ -99,7 +99,7 @@ public class ObjReader {
         ArrayList<Float> oFVNs=new ArrayList<>();
         ArrayList<Float> oFVTs=new ArrayList<>();
         HashMap<String,MtlInfo> mTls=null;
-        Obj3D mObj=null;
+        MtlInfo nowMtl=null;
         try{
             String parent;
             InputStream inputStream;
@@ -117,17 +117,9 @@ public class ObjReader {
             InputStreamReader isr=new InputStreamReader(inputStream);
             BufferedReader br=new BufferedReader(isr);
             String temps;
-            while((temps=br.readLine())!=null)
-            {
+            while((temps=br.readLine())!=null){
                 if("".equals(temps)){
-                    if(mObj!=null){
-                        mObj.setVert(oFVs);
-                        mObj.setVertNorl(oFVNs);
-                        mObj=null;
-                        Log.e("obj","size:"+oFVs.size()+"/"+oFVNs.size());
-                        oFVs.clear();
-                        oFVNs.clear();
-                    }
+
                 }else{
                     String[] tempsa=temps.split("[ ]+");
                     switch (tempsa[0].trim()){
@@ -141,10 +133,20 @@ public class ObjReader {
                             mTls=readMtl(stream);
                             break;
                         case "usemtl":  //采用纹理
-                            mObj=new Obj3D();
-                            mObj.mtl=mTls.get(tempsa[1]);       //获取当前
-                            mObjs.add(mObj);
-                            Log.e("obj","add obj "+mObj.mtl.newmtl);
+                            if(oFVs.size()>9){
+                                Obj3D mObj=new Obj3D();
+                                mObj.setVert(oFVs);
+                                mObj.setVertNorl(oFVNs);
+                                mObj.setVertTexture(oFVTs);
+                                mObj.mtl=nowMtl;
+                                mObjs.add(mObj);
+                            }
+                            oFVs.clear();
+                            oFVNs.clear();
+                            oFVTs.clear();
+                            if(mTls!=null){
+                                nowMtl=mTls.get(tempsa[1]);
+                            }
                             break;
                         case "v":       //原始顶点
                             read(tempsa,oVs);
@@ -158,25 +160,43 @@ public class ObjReader {
                         case "f":
                             for (int i=1;i<tempsa.length;i++){
                                 String[] fs=tempsa[i].split("/");
-                                //顶点索引
-                                int index=Integer.parseInt(fs[0])-1;
-                                oFVs.add(oVs.get(index*3));
-                                oFVs.add(oVs.get(index*3+1));
-                                oFVs.add(oVs.get(index*3+2));
-                                //贴图
-                                index=Integer.parseInt(fs[1])-1;
-                                oFVTs.add(oVTs.get(index*2));
-                                oFVTs.add(oVTs.get(index*2+1));
-                                //法线索引
-                                index=Integer.parseInt(fs[2])-1;
-                                oFVNs.add(oVNs.get(index*3));
-                                oFVNs.add(oVNs.get(index*3+1));
-                                oFVNs.add(oVNs.get(index*3+2));
+                                int index;
+                                if(fs.length>0){
+                                    //顶点索引
+                                    index=Integer.parseInt(fs[0])-1;
+                                    oFVs.add(oVs.get(index*3));
+                                    oFVs.add(oVs.get(index*3+1));
+                                    oFVs.add(oVs.get(index*3+2));
+                                }
+                                if(fs.length>1){
+                                    //贴图
+                                    index=Integer.parseInt(fs[1])-1;
+                                    oFVTs.add(oVTs.get(index*2));
+                                    oFVTs.add(oVTs.get(index*2+1));
+                                }
+                                if(fs.length>2){
+                                    //法线索引
+                                    index=Integer.parseInt(fs[2])-1;
+                                    oFVNs.add(oVNs.get(index*3));
+                                    oFVNs.add(oVNs.get(index*3+1));
+                                    oFVNs.add(oVNs.get(index*3+2));
+                                }
                             }
                             break;
                     }
                 }
             }
+            if(oFVs.size()>9){
+                Obj3D mObj=new Obj3D();
+                mObj.setVert(oFVs);
+                mObj.setVertNorl(oFVNs);
+                mObj.setVertTexture(oFVTs);
+                mObj.mtl=nowMtl;
+                mObjs.add(mObj);
+            }
+            oFVs.clear();
+            oFVNs.clear();
+            oFVTs.clear();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -199,10 +219,10 @@ public class ObjReader {
                         mtlInfo.newmtl=tempsa[1];
                         map.put(tempsa[1],mtlInfo);
                         break;
-                    case "illum":       //原始顶点
+                    case "illum":     //光照模型
                         mtlInfo.illum=Integer.parseInt(tempsa[1]);
                         break;
-                    case "Kd":      //原始顶点法线
+                    case "Kd":
                         read(tempsa,mtlInfo.Kd);
                         break;
                     case "Ka":
@@ -217,7 +237,7 @@ public class ObjReader {
                     case "Ns":
                         mtlInfo.Ns=Float.parseFloat(tempsa[1]);
                     case "map_Kd":
-                        mtlInfo.textureName=tempsa[1];
+                        mtlInfo.map_Kd=tempsa[1];
                         break;
                 }
             }

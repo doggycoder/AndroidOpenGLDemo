@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -42,9 +43,11 @@ public class ObjFilter2 extends AFilter {
         mHNormal=GLES20.glGetAttribLocation(mProgram,"vNormal");
         //打开深度检测
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        if(obj.vertTexture!=null){
+//        GLES20.glEnable(GLES20.GL_CULL_FACE);
+        if(obj!=null&&obj.mtl!=null){
             try {
-                textureId=createTexture(BitmapFactory.decodeStream(mRes.getAssets().open("3dres/"+obj.mtl.textureName)));
+                Log.e("obj","texture-->"+"3dres/"+obj.mtl.map_Kd);
+                textureId=createTexture(BitmapFactory.decodeStream(mRes.getAssets().open("3dres/"+obj.mtl.map_Kd)));
                 setTextureId(textureId);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -54,19 +57,21 @@ public class ObjFilter2 extends AFilter {
 
     @Override
     protected void onClear() {
-        super.onClear();
+//        super.onClear();
     }
 
     @Override
     protected void onDraw() {
         GLES20.glEnableVertexAttribArray(mHPosition);
-        GLES20.glVertexAttribPointer(mHPosition,3, GLES20.GL_FLOAT, false, 3*4,obj.vert);
+        GLES20.glVertexAttribPointer(mHPosition,3, GLES20.GL_FLOAT, false,0,obj.vert);
         GLES20.glEnableVertexAttribArray(mHNormal);
-        GLES20.glVertexAttribPointer(mHNormal,3, GLES20.GL_FLOAT, false, 3*4,obj.vertNorl);
+        GLES20.glVertexAttribPointer(mHNormal,3, GLES20.GL_FLOAT, false, 0,obj.vertNorl);
+        GLES20.glEnableVertexAttribArray(mHCoord);
+        GLES20.glVertexAttribPointer(mHCoord,2,GLES20.GL_FLOAT,false,0,obj.vertTexture);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES,0,obj.vertCount);
         GLES20.glDisableVertexAttribArray(mHPosition);
         GLES20.glDisableVertexAttribArray(mHNormal);
-//        GLES20.glDisableVertexAttribArray(mHCoord);
+        GLES20.glDisableVertexAttribArray(mHCoord);
     }
 
     @Override
@@ -88,7 +93,7 @@ public class ObjFilter2 extends AFilter {
             //设置环绕方向S，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,GLES20.GL_CLAMP_TO_EDGE);
             //设置环绕方向T，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,GLES20.GL_REPEAT);
             //根据以上指定的参数，生成一个2D纹理
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
             return texture[0];

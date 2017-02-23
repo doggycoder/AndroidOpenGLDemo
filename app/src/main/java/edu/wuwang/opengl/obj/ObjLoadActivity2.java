@@ -1,5 +1,6 @@
 package edu.wuwang.opengl.obj;
 
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Bundle;
@@ -52,13 +53,16 @@ public class ObjLoadActivity2 extends AppCompatActivity {
                 for (ObjFilter2 f:filters){
                     f.onSizeChanged(width, height);
                     float[] matrix= Gl2Utils.getOriginalMatrix();
-                    Matrix.scaleM(matrix,0,0.1f,0.1f*width/height,0.1f);
+                    Matrix.translateM(matrix,0,0,-0.25f,0);
+                    Matrix.scaleM(matrix,0,0.018f,0.018f*width/height,0.018f);
                     f.setMatrix(matrix);
                 }
             }
 
             @Override
             public void onDrawFrame(GL10 gl) {
+                GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
                 for (ObjFilter2 f:filters){
                     Matrix.rotateM(f.getMatrix(),0,0.3f,0,1,0);
                     f.draw();
