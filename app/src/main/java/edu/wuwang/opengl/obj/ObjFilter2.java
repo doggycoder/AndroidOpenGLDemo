@@ -20,6 +20,9 @@ public class ObjFilter2 extends AFilter {
     private int vertCount;
 
     private int mHNormal;
+    private int mHKa;
+    private int mHKd;
+    private int mHKs;
     private Obj3D obj;
 
     private int textureId;
@@ -41,9 +44,11 @@ public class ObjFilter2 extends AFilter {
     protected void onCreate() {
         createProgramByAssetsFile("3dres/obj2.vert","3dres/obj2.frag");
         mHNormal=GLES20.glGetAttribLocation(mProgram,"vNormal");
+        mHKa=GLES20.glGetUniformLocation(mProgram,"vKa");
+        mHKd=GLES20.glGetUniformLocation(mProgram,"vKd");
+        mHKs=GLES20.glGetUniformLocation(mProgram,"vKs");
         //打开深度检测
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-//        GLES20.glEnable(GLES20.GL_CULL_FACE);
         if(obj!=null&&obj.mtl!=null){
             try {
                 Log.e("obj","texture-->"+"3dres/"+obj.mtl.map_Kd);
@@ -58,6 +63,16 @@ public class ObjFilter2 extends AFilter {
     @Override
     protected void onClear() {
 //        super.onClear();
+    }
+
+    @Override
+    protected void onSetExpandData() {
+        super.onSetExpandData();
+        if(obj!=null&&obj.mtl!=null){
+            GLES20.glUniform3fv(mHKa,1,obj.mtl.Ka,0);
+            GLES20.glUniform3fv(mHKd,1,obj.mtl.Kd,0);
+            GLES20.glUniform3fv(mHKs,1,obj.mtl.Ks,0);
+        }
     }
 
     @Override
@@ -93,7 +108,7 @@ public class ObjFilter2 extends AFilter {
             //设置环绕方向S，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,GLES20.GL_CLAMP_TO_EDGE);
             //设置环绕方向T，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,GLES20.GL_REPEAT);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,GLES20.GL_CLAMP_TO_EDGE);
             //根据以上指定的参数，生成一个2D纹理
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
             return texture[0];

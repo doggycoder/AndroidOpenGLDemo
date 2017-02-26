@@ -33,7 +33,7 @@ public class ObjLoadActivity2 extends AppCompatActivity {
         setContentView(R.layout.activity_obj);
         mGLView= (GLSurfaceView) findViewById(R.id.mGLView);
         mGLView.setEGLContextClientVersion(2);
-        List<Obj3D> model=ObjReader.readMultiObj(this,"assets/3dres/0.obj");
+        List<Obj3D> model=ObjReader.readMultiObj(this,"assets/3dres/pikachu.obj");
         filters=new ArrayList<>();
         for (int i=0;i<model.size();i++){
             ObjFilter2 f=new ObjFilter2(getResources());
@@ -53,8 +53,8 @@ public class ObjLoadActivity2 extends AppCompatActivity {
                 for (ObjFilter2 f:filters){
                     f.onSizeChanged(width, height);
                     float[] matrix= Gl2Utils.getOriginalMatrix();
-                    Matrix.translateM(matrix,0,0,-0.25f,0);
-                    Matrix.scaleM(matrix,0,0.018f,0.018f*width/height,0.018f);
+                    Matrix.translateM(matrix,0,0,-0.3f,0);
+                    Matrix.scaleM(matrix,0,0.008f,0.008f*width/height,0.008f);
                     f.setMatrix(matrix);
                 }
             }

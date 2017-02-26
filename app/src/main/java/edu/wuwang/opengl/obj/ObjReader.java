@@ -13,7 +13,9 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wuwang on 2017/1/7
@@ -90,8 +92,8 @@ public class ObjReader {
     }
 
     public static List<Obj3D> readMultiObj(Context context,String file){
-        List<Obj3D> mObjs=new ArrayList<>();
         boolean isAssets;
+        ArrayList<Obj3D> data=new ArrayList<>();
         ArrayList<Float> oVs=new ArrayList<Float>();//原始顶点坐标列表
         ArrayList<Float> oVNs=new ArrayList<>();    //原始顶点法线列表
         ArrayList<Float> oVTs=new ArrayList<>();    //原始贴图坐标列表
@@ -99,6 +101,8 @@ public class ObjReader {
         ArrayList<Float> oFVNs=new ArrayList<>();
         ArrayList<Float> oFVTs=new ArrayList<>();
         HashMap<String,MtlInfo> mTls=null;
+        HashMap<String,Obj3D> mObjs=new HashMap<>();
+        Obj3D nowObj=null;
         MtlInfo nowMtl=null;
         try{
             String parent;
@@ -133,19 +137,15 @@ public class ObjReader {
                             mTls=readMtl(stream);
                             break;
                         case "usemtl":  //采用纹理
-                            if(oFVs.size()>9){
-                                Obj3D mObj=new Obj3D();
-                                mObj.setVert(oFVs);
-                                mObj.setVertNorl(oFVNs);
-                                mObj.setVertTexture(oFVTs);
-                                mObj.mtl=nowMtl;
-                                mObjs.add(mObj);
-                            }
-                            oFVs.clear();
-                            oFVNs.clear();
-                            oFVTs.clear();
                             if(mTls!=null){
                                 nowMtl=mTls.get(tempsa[1]);
+                            }
+                            if(mObjs.containsKey(tempsa[1])){
+                                nowObj=mObjs.get(tempsa[1]);
+                            }else{
+                                nowObj=new Obj3D();
+                                nowObj.mtl=nowMtl;
+                                mObjs.put(tempsa[1],nowObj);
                             }
                             break;
                         case "v":       //原始顶点
@@ -164,43 +164,37 @@ public class ObjReader {
                                 if(fs.length>0){
                                     //顶点索引
                                     index=Integer.parseInt(fs[0])-1;
-                                    oFVs.add(oVs.get(index*3));
-                                    oFVs.add(oVs.get(index*3+1));
-                                    oFVs.add(oVs.get(index*3+2));
+                                    nowObj.addVert(oVs.get(index*3));
+                                    nowObj.addVert(oVs.get(index*3+1));
+                                    nowObj.addVert(oVs.get(index*3+2));
                                 }
                                 if(fs.length>1){
                                     //贴图
                                     index=Integer.parseInt(fs[1])-1;
-                                    oFVTs.add(oVTs.get(index*2));
-                                    oFVTs.add(oVTs.get(index*2+1));
+                                    nowObj.addVertTexture(oVTs.get(index*2));
+                                    nowObj.addVertTexture(oVTs.get(index*2+1));
                                 }
                                 if(fs.length>2){
                                     //法线索引
                                     index=Integer.parseInt(fs[2])-1;
-                                    oFVNs.add(oVNs.get(index*3));
-                                    oFVNs.add(oVNs.get(index*3+1));
-                                    oFVNs.add(oVNs.get(index*3+2));
+                                    nowObj.addVertNorl(oVNs.get(index*3));
+                                    nowObj.addVertNorl(oVNs.get(index*3+1));
+                                    nowObj.addVertNorl(oVNs.get(index*3+2));
                                 }
                             }
                             break;
                     }
                 }
             }
-            if(oFVs.size()>9){
-                Obj3D mObj=new Obj3D();
-                mObj.setVert(oFVs);
-                mObj.setVertNorl(oFVNs);
-                mObj.setVertTexture(oFVTs);
-                mObj.mtl=nowMtl;
-                mObjs.add(mObj);
-            }
-            oFVs.clear();
-            oFVNs.clear();
-            oFVTs.clear();
         }catch (Exception e){
             e.printStackTrace();
         }
-        return mObjs;
+        for (Map.Entry<String, Obj3D> stringObj3DEntry : mObjs.entrySet()) {
+            Obj3D obj = stringObj3DEntry.getValue();
+            data.add(obj);
+            obj.dataLock();
+        }
+        return data;
     }
 
     public static HashMap<String,MtlInfo> readMtl(InputStream stream){

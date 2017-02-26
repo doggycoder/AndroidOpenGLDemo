@@ -19,8 +19,51 @@ public class Obj3D {
 
     public MtlInfo mtl;
 
+    private ArrayList<Float> tempVert;
+    private ArrayList<Float> tempVertNorl;
+    public ArrayList<Float> tempVertTexture;
+
     public int textureSMode;
     public int textureTMode;
+
+    public void addVert(float d){
+        if(tempVert==null){
+            tempVert=new ArrayList<>();
+        }
+        tempVert.add(d);
+    }
+
+    public void addVertTexture(float d){
+        if(tempVertTexture==null){
+            tempVertTexture=new ArrayList<>();
+        }
+        tempVertTexture.add(d);
+    }
+
+    public void addVertNorl(float d){
+        if(tempVertNorl==null){
+            tempVertNorl=new ArrayList<>();
+        }
+        tempVertNorl.add(d);
+    }
+
+    public void dataLock(){
+        if(tempVert!=null){
+            setVert(tempVert);
+            tempVert.clear();
+            tempVert=null;
+        }
+        if(tempVertTexture!=null){
+            setVertTexture(tempVertTexture);
+            tempVertTexture.clear();
+            tempVertTexture=null;
+        }
+        if(tempVertNorl!=null){
+            setVertNorl(tempVertNorl);
+            tempVertNorl.clear();
+            tempVertNorl=null;
+        }
+    }
 
     public void setVert(ArrayList<Float> data){
         int size=data.size();
