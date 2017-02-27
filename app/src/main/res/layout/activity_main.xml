@@ -53,4 +53,10 @@
         android:text="@string/type_obj"
         android:id="@+id/btObj"
         android:onClick="onClick" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/type_obj2"
+        android:id="@+id/btObj2"
+        android:onClick="onClick" />
 </LinearLayout>
