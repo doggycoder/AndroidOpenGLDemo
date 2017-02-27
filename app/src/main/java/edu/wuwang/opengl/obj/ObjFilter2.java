@@ -5,26 +5,29 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
+import android.util.Log;
 
 import java.io.IOException;
 
 import edu.wuwang.opengl.filter.AFilter;
-import edu.wuwang.opengl.utils.Gl2Utils;
 
 /**
  * Created by wuwang on 2017/1/8
  */
 
-public class ObjFilter extends AFilter {
+public class ObjFilter2 extends AFilter {
 
     private int vertCount;
 
     private int mHNormal;
+    private int mHKa;
+    private int mHKd;
+    private int mHKs;
     private Obj3D obj;
 
     private int textureId;
 
-    public ObjFilter(Resources mRes) {
+    public ObjFilter2(Resources mRes) {
         super(mRes);
     }
 
@@ -39,12 +42,16 @@ public class ObjFilter extends AFilter {
 
     @Override
     protected void onCreate() {
-        createProgramByAssetsFile("3dres/obj.vert","3dres/obj.frag");
+        createProgramByAssetsFile("3dres/obj2.vert","3dres/obj2.frag");
         mHNormal=GLES20.glGetAttribLocation(mProgram,"vNormal");
+        mHKa=GLES20.glGetUniformLocation(mProgram,"vKa");
+        mHKd=GLES20.glGetUniformLocation(mProgram,"vKd");
+        mHKs=GLES20.glGetUniformLocation(mProgram,"vKs");
         //打开深度检测
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        if(obj.vertTexture!=null){
+        if(obj!=null&&obj.mtl!=null){
             try {
+                Log.e("obj","texture-->"+"3dres/"+obj.mtl.map_Kd);
                 textureId=createTexture(BitmapFactory.decodeStream(mRes.getAssets().open("3dres/"+obj.mtl.map_Kd)));
                 setTextureId(textureId);
             } catch (IOException e) {
@@ -55,19 +62,31 @@ public class ObjFilter extends AFilter {
 
     @Override
     protected void onClear() {
-        super.onClear();
+//        super.onClear();
+    }
+
+    @Override
+    protected void onSetExpandData() {
+        super.onSetExpandData();
+        if(obj!=null&&obj.mtl!=null){
+            GLES20.glUniform3fv(mHKa,1,obj.mtl.Ka,0);
+            GLES20.glUniform3fv(mHKd,1,obj.mtl.Kd,0);
+            GLES20.glUniform3fv(mHKs,1,obj.mtl.Ks,0);
+        }
     }
 
     @Override
     protected void onDraw() {
         GLES20.glEnableVertexAttribArray(mHPosition);
-        GLES20.glVertexAttribPointer(mHPosition,3, GLES20.GL_FLOAT, false, 3*4,obj.vert);
+        GLES20.glVertexAttribPointer(mHPosition,3, GLES20.GL_FLOAT, false,0,obj.vert);
         GLES20.glEnableVertexAttribArray(mHNormal);
-        GLES20.glVertexAttribPointer(mHNormal,3, GLES20.GL_FLOAT, false, 3*4,obj.vertNorl);
+        GLES20.glVertexAttribPointer(mHNormal,3, GLES20.GL_FLOAT, false, 0,obj.vertNorl);
+        GLES20.glEnableVertexAttribArray(mHCoord);
+        GLES20.glVertexAttribPointer(mHCoord,2,GLES20.GL_FLOAT,false,0,obj.vertTexture);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES,0,obj.vertCount);
         GLES20.glDisableVertexAttribArray(mHPosition);
         GLES20.glDisableVertexAttribArray(mHNormal);
-//        GLES20.glDisableVertexAttribArray(mHCoord);
+        GLES20.glDisableVertexAttribArray(mHCoord);
     }
 
     @Override
