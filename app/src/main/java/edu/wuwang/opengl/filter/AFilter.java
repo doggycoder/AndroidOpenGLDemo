@@ -12,27 +12,31 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.Arrays;
 
 import android.content.res.Resources;
 import android.opengl.GLES20;
 import android.util.Log;
+import android.util.SparseArray;
+
+import edu.wuwang.opengl.utils.MatrixUtils;
 
 /**
  * Description:
  */
 public abstract class AFilter {
 
+    private static final String TAG="Filter";
+
+    public static final int KEY_OUT=0x101;
+    public static final int KEY_IN=0x102;
+    public static final int KEY_INDEX=0x201;
+
     public static boolean DEBUG=true;
     /**
      * 单位矩阵
      */
-    public static final float[] OM={
-        1,0,0,0,
-        0,1,0,0,
-        0,0,1,0,
-        0,0,0,1
-    };
-
+    public static final float[] OM= MatrixUtils.getOriginalMatrix();
     /**
      * 程序句柄
      */
@@ -74,7 +78,7 @@ public abstract class AFilter {
 
     protected int mFlag=0;
 
-    private float[] matrix=OM;
+    private float[] matrix= Arrays.copyOf(OM,16);
 
     private int textureType=0;      //默认使用Texture2D0
     private int textureId=0;
@@ -94,6 +98,9 @@ public abstract class AFilter {
         1.0f, 1.0f,
     };
 
+    private SparseArray<boolean[]> mBools;
+    private SparseArray<int[]> mInts;
+    private SparseArray<float[]> mFloats;
 
     public AFilter(Resources mRes){
         this.mRes=mRes;
@@ -104,19 +111,19 @@ public abstract class AFilter {
         onCreate();
     }
 
-    public final void size(int width,int height){
+    public final void setSize(int width,int height){
         onSizeChanged(width,height);
     }
 
     public void draw(){
         onClear();
-        GLES20.glUseProgram(mProgram);
+        onUseProgram();
         onSetExpandData();
         onBindTexture();
         onDraw();
     }
 
-    public final void setMatrix(float[] matrix){
+    public void setMatrix(float[] matrix){
         this.matrix=matrix;
     }
 
@@ -148,9 +155,52 @@ public abstract class AFilter {
         return mFlag;
     }
 
-    public void setFloat(int type,float ... params){}
-    public void setInt(int type,int ... params){}
-    public void setBool(int type,boolean ... params){}
+    public void setFloat(int type,float ... params){
+        if(mFloats==null){
+            mFloats=new SparseArray<>();
+        }
+        mFloats.put(type,params);
+    }
+    public void setInt(int type,int ... params){
+        if(mInts==null){
+            mInts=new SparseArray<>();
+        }
+        mInts.put(type,params);
+    }
+    public void setBool(int type,boolean ... params){
+        if(mBools==null){
+            mBools=new SparseArray<>();
+        }
+        mBools.put(type,params);
+    }
+
+    public boolean getBool(int type,int index) {
+        if (mBools == null) return false;
+        boolean[] b = mBools.get(type);
+        return !(b == null || b.length <= index) && b[index];
+    }
+
+    public int getInt(int type,int index){
+        if (mInts == null) return 0;
+        int[] b = mInts.get(type);
+        if(b == null || b.length <= index){
+            return 0;
+        }
+        return b[index];
+    }
+
+    public float getFloat(int type,int index){
+        if (mFloats == null) return 0;
+        float[] b = mFloats.get(type);
+        if(b == null || b.length <= index){
+            return 0;
+        }
+        return b[index];
+    }
+
+    public int getOutputTexture(){
+        return -1;
+    }
 
     /**
      * 实现此方法，完成程序的创建，可直接调用createProgram来实现
@@ -186,6 +236,10 @@ public abstract class AFilter {
         mTexBuffer.position(0);
     }
 
+    protected void onUseProgram(){
+        GLES20.glUseProgram(mProgram);
+    }
+
     /**
      * 启用顶点坐标和纹理坐标进行绘制
      */
@@ -208,7 +262,7 @@ public abstract class AFilter {
     }
 
     /**
-     * 设置其他数据
+     * 设置其他扩展数据
      */
     protected void onSetExpandData(){
         GLES20.glUniformMatrix4fv(mHMatrix,1,false,matrix,0);
@@ -225,7 +279,7 @@ public abstract class AFilter {
 
     public static void glError(int code,Object index){
         if(DEBUG&&code!=0){
-            Log.e("Filter","glError:"+index);
+            Log.e(TAG,"glError:"+code+"---"+index);
         }
     }
 

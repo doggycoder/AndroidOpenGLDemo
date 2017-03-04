@@ -7,6 +7,8 @@
  */
 package edu.wuwang.opengl.filter;
 
+import java.util.Arrays;
+
 import android.content.res.Resources;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
@@ -16,6 +18,9 @@ import android.opengl.GLES20;
  */
 public class OesFilter extends AFilter{
 
+    private int mHCoordMatrix;
+    private float[] mCoordMatrix= Arrays.copyOf(OM,16);
+
     public OesFilter(Resources mRes) {
         super(mRes);
     }
@@ -23,6 +28,17 @@ public class OesFilter extends AFilter{
     @Override
     protected void onCreate() {
         createProgramByAssetsFile("shader/oes_base_vertex.sh","shader/oes_base_fragment.sh");
+        mHCoordMatrix=GLES20.glGetUniformLocation(mProgram,"vCoordMatrix");
+    }
+
+    public void setCoordMatrix(float[] matrix){
+        this.mCoordMatrix=matrix;
+    }
+
+    @Override
+    protected void onSetExpandData() {
+        super.onSetExpandData();
+        GLES20.glUniformMatrix4fv(mHCoordMatrix,1,false,mCoordMatrix,0);
     }
 
     @Override
