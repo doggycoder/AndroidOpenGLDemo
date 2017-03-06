@@ -33,7 +33,7 @@ public class CameraController implements GLSurfaceView.Renderer {
     private GLView mGLView;
     private Context mContext;
 
-    private Renderer mRenderer;                   //用户附加的Renderer或用来监听Renderer
+    private Renderer mRenderer;                                 //用户附加的Renderer或用来监听Renderer
     private AFilter mShowFilter;                                //用来渲染输出的Filter
     private OesFilter mOesFilter;                               //用来接收输入的Filter
     private Point mDataSize;                                    //数据的大小
