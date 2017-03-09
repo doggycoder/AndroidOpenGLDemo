@@ -23,6 +23,11 @@
 17. 3D模型《帽子》加载
 18. EGL方式后台处理图像示例
 19. 3D《皮卡丘》模型及纹理加载，光照处理
+20. Camera1API/Camera2API预览到SurfaceView和TextureView
+
+## 20170309更新
+1. 增加Texture控制类，支持所有图像流的OpenGLES方式处理
+2. 增加相机示例，5.0前使用Camera1 API预览，5.0后使用Camera2预览
 
 ## 20170227更新
 1. 增加相对复杂些的3D模型加载

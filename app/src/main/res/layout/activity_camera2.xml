@@ -2,7 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <SurfaceView android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/mSurface" />
+    <FrameLayout android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <SurfaceView android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/mSurface" />
+    </FrameLayout>
+    <ImageButton
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:contentDescription="@string/app_name"
+        android:background="@drawable/btn_shutter_background"
+        android:id="@+id/mShutter"
+        android:onClick="onClick"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

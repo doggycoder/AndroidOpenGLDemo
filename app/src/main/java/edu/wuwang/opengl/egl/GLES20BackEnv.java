@@ -46,7 +46,7 @@ public class GLES20BackEnv {
         }
         // Call the renderer initialization routines
         mFilter.create();
-        mFilter.size(mWidth, mHeight);
+        mFilter.setSize(mWidth, mHeight);
     }
 
     public Bitmap getBitmap() {

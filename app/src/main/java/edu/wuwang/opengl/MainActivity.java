@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import edu.wuwang.opengl.camera.Camera2Activity;
 import edu.wuwang.opengl.camera.CameraActivity;
 import edu.wuwang.opengl.egl.EGLBackEnvActivity;
 import edu.wuwang.opengl.etc.ZipActivity;
@@ -37,6 +38,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         add("图片处理",SGLViewActivity.class);
         add("图形变换",VaryActivity.class);
         add("相机",CameraActivity.class);
+        add("相机2",Camera2Activity.class);
         add("压缩纹理动画",ZipActivity.class);
         add("FBO使用",FBOActivity.class);
         add("EGL后台处理",EGLBackEnvActivity.class);
