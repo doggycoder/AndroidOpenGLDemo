@@ -18,6 +18,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.Manifest;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
@@ -47,6 +48,9 @@ import android.widget.Toast;
 
 import edu.wuwang.opengl.BaseActivity;
 import edu.wuwang.opengl.R;
+import edu.wuwang.opengl.filter.GrayFilter;
+import edu.wuwang.opengl.filter.NoFilter;
+import edu.wuwang.opengl.filter.WaterMarkFilter;
 import edu.wuwang.opengl.utils.PermissionUtils;
 
 import static android.hardware.camera2.CameraDevice.TEMPLATE_PREVIEW;
@@ -85,6 +89,14 @@ public class Camera2Activity extends BaseActivity implements FrameCallback {
             setContentView(R.layout.activity_camera2);
             mSurfaceView = (SurfaceView)findViewById(R.id.mSurface);
             mController = new TextureController(Camera2Activity.this);
+            WaterMarkFilter filter=new WaterMarkFilter(getResources());
+            filter.setWaterMark(BitmapFactory.decodeResource(getResources(),R.mipmap.logo));
+            filter.setPosition(300,50,300,150);
+            mController.addFilter(filter);
+            WaterMarkFilter filter2=new WaterMarkFilter(getResources());
+            filter2.setWaterMark(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher));
+            filter2.setPosition(300,300,150,150);
+            mController.addFilter(filter2);
             mController.setFrameCallback(720, 1280, Camera2Activity.this);
             mSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override

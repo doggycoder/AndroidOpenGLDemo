@@ -15,6 +15,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import android.content.res.Resources;
 import android.opengl.GLES20;
 
+import edu.wuwang.opengl.utils.MatrixUtils;
+
 /**
  * Description:
  */
@@ -37,6 +39,9 @@ public class GroupFilter extends AFilter{
     }
 
     public void addFilter(final AFilter filter){
+        //绘制到frameBuffer上和绘制到屏幕上的纹理坐标是不一样的
+        //Android屏幕相对GL世界的纹理Y轴翻转
+        MatrixUtils.flip(filter.getMatrix(),false,true);
         mFilterQueue.add(filter);
     }
 
@@ -65,21 +70,23 @@ public class GroupFilter extends AFilter{
     public void draw(){
         updateFilter();
         textureIndex=0;
-        GLES20.glViewport(0,0,width,height);
-        for (AFilter filter:mFilters){
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fFrame[0]);
-            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
-                GLES20.GL_TEXTURE_2D, fTexture[textureIndex%2], 0);
-            GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_DEPTH_ATTACHMENT,
-                GLES20.GL_RENDERBUFFER, fRender[0]);
-            if(textureIndex==0){
-                filter.setTextureId(getTextureId());
-            }else{
-                filter.setTextureId(fTexture[(textureIndex-1)%2]);
+        if(size>0){
+            for (AFilter filter:mFilters){
+                GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fFrame[0]);
+                GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
+                        GLES20.GL_TEXTURE_2D, fTexture[textureIndex%2], 0);
+                GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_DEPTH_ATTACHMENT,
+                        GLES20.GL_RENDERBUFFER, fRender[0]);
+                GLES20.glViewport(0,0,width,height);
+                if(textureIndex==0){
+                    filter.setTextureId(getTextureId());
+                }else{
+                    filter.setTextureId(fTexture[(textureIndex-1)%2]);
+                }
+                filter.draw();
+                unBindFrame();
+                textureIndex++;
             }
-            filter.draw();
-            unBindFrame();
-            textureIndex++;
         }
 
     }

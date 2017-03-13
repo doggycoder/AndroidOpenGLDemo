@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import edu.wuwang.opengl.filter.AFilter;
+import edu.wuwang.opengl.filter.GroupFilter;
 import edu.wuwang.opengl.filter.NoFilter;
 import edu.wuwang.opengl.utils.EasyGlUtils;
 import edu.wuwang.opengl.utils.MatrixUtils;
@@ -32,8 +33,9 @@ public class TextureController implements GLSurfaceView.Renderer {
     private GLView mGLView;
     private Context mContext;
 
-    private Renderer mRenderer;                   //用户附加的Renderer或用来监听Renderer
-    private TextureFilter mEffectFilter;                     //特效处理的Filter
+    private Renderer mRenderer;                                 //用户附加的Renderer或用来监听Renderer
+    private TextureFilter mEffectFilter;                        //特效处理的Filter
+    private GroupFilter mGroupFilter;                           //中间特效
     private AFilter mShowFilter;                                //用来渲染输出的Filter
     private Point mDataSize;                                    //数据的大小
     private Point mWindowSize;                                  //输出视图的大小
@@ -93,6 +95,7 @@ public class TextureController implements GLSurfaceView.Renderer {
 
         mEffectFilter=new TextureFilter(mContext.getResources());
         mShowFilter=new NoFilter(mContext.getResources());
+        mGroupFilter=new GroupFilter(mContext.getResources());
 
         //设置默认的DateSize，DataSize由AiyaProvider根据数据源的图像宽高进行设置
         mDataSize=new Point(720,1280);
@@ -123,6 +126,7 @@ public class TextureController implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         mEffectFilter.create();
+        mGroupFilter.create();
         mShowFilter.create();
         if(!isParamSet.get()){
             if(mRenderer!=null){
@@ -150,7 +154,7 @@ public class TextureController implements GLSurfaceView.Renderer {
             mDataSize.x,mDataSize.y,width,height);
         mShowFilter.setSize(width, height);
         mShowFilter.setMatrix(SM);
-
+        mGroupFilter.setSize(mDataSize.x,mDataSize.y);
         mEffectFilter.setSize(mDataSize.x,mDataSize.y);
         mShowFilter.setSize(mDataSize.x,mDataSize.y);
         if(mRenderer!=null){
@@ -162,11 +166,13 @@ public class TextureController implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         if(isParamSet.get()){
             mEffectFilter.draw();
+            mGroupFilter.setTextureId(mEffectFilter.getOutputTexture());
+            mGroupFilter.draw();
 
             //显示传入的texture上，一般是显示在屏幕上
             GLES20.glViewport(0,0,mWindowSize.x,mWindowSize.y);
             mShowFilter.setMatrix(SM);
-            mShowFilter.setTextureId(mEffectFilter.getOutputTexture());
+            mShowFilter.setTextureId(mGroupFilter.getOutputTexture());
             mShowFilter.draw();
             if(mRenderer!=null){
                 mRenderer.onDrawFrame(gl);
@@ -180,7 +186,7 @@ public class TextureController implements GLSurfaceView.Renderer {
      * @param filter 滤镜
      */
     public void addFilter(AFilter filter){
-
+        mGroupFilter.addFilter(filter);
     }
 
     /**
@@ -193,7 +199,7 @@ public class TextureController implements GLSurfaceView.Renderer {
     public void setShowType(int type){
         this.mShowType=type;
         if(mWindowSize.x>0&&mWindowSize.y>0){
-            MatrixUtils.getMatrix(SM,MatrixUtils.TYPE_CENTERCROP,
+            MatrixUtils.getMatrix(SM,mShowType,
                 mDataSize.x,mDataSize.y,mWindowSize.x,mWindowSize.y);
             mShowFilter.setMatrix(SM);
             mShowFilter.setSize(mWindowSize.x,mWindowSize.y);
