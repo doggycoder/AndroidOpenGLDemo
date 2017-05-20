@@ -1,5 +1,6 @@
 package edu.wuwang.opengl;
 
+import edu.wuwang.opengl.vr.VrContextActivity;
 import java.util.ArrayList;
 
 import android.content.Intent;
@@ -44,6 +45,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         add("EGL后台处理",EGLBackEnvActivity.class);
         add("3D obj模型",ObjLoadActivity.class);
         add("obj+mtl模型",ObjLoadActivity2.class);
+        add("VR效果",VrContextActivity.class);
         mList.setAdapter(new MenuAdapter());
     }
 

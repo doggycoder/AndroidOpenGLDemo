@@ -50,6 +50,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".obj.ObjLoadActivity2"
             android:screenOrientation="portrait" />
+        <activity android:name=".vr.VrContextActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
