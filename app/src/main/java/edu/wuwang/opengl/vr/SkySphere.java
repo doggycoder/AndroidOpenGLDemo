@@ -20,6 +20,11 @@ import java.util.ArrayList;
 
 public class SkySphere{
 
+    private static final float UNIT_SIZE = 1f;// 单位尺寸
+    private float r = 0.5f; // 球的半径
+    final int angleSpan = 2;// 将球进行单位切分的角度
+    int vCount = 0;// 顶点个数，先初始化为0
+
     private float step=2f;
     private Resources res;
 
@@ -37,21 +42,17 @@ public class SkySphere{
     private FloatBuffer posBuffer;
     private FloatBuffer cooBuffer;
     private int vSize;
-    private float skyRate=1f;
+    private float skyRate=0.2f;
 
     private Bitmap mBitmap;
 
-    private int textureId;
-
-    public SkySphere(Context context,String texture,float scale,float aHalf,int n){
+    public SkySphere(Context context,String texture){
         this.res=context.getResources();
         try {
             mBitmap=BitmapFactory.decodeStream(context.getAssets().open(texture));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //调用初始化顶点数据的initVertexData方法
-        initVertexData(scale,aHalf,n);
     }
 
     public void create(){
@@ -60,19 +61,17 @@ public class SkySphere{
         mHUTexture=GLES20.glGetUniformLocation(mHProgram,"uTexture");
         mHPosition=GLES20.glGetAttribLocation(mHProgram,"aPosition");
         mHCoordinate=GLES20.glGetAttribLocation(mHProgram,"aCoordinate");
-        textureId=createTexture();
-
-        /*GLES20.glEnable(GLES20.GL_CULL_FACE);
-        GLES20.glCullFace(GLES20.GL_FRONT);*/
+        createTexture();
+        calculateAttribute();
     }
 
     public void setSize(int width,int height){
         //计算宽高比
         float ratio=(float)width/height;
         //设置透视投影
-        Matrix.frustumM(mProjectMatrix, 0, -ratio*skyRate, ratio*skyRate, -1*skyRate, 1*skyRate, 1, 20);
+        Matrix.frustumM(mProjectMatrix, 0, -ratio*skyRate, ratio*skyRate, -1*skyRate, 1*skyRate, 1, 200);
         //设置相机位置
-        Matrix.setLookAtM(mViewMatrix, 0,10f, 0.0f, 0.0f, 0f, 0.0f, 0.0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0.0f, 2f, 0f, 0f, 0.0f, 0f, -1.0f, 0.0f);
         //计算变换矩阵
         Matrix.multiplyMM(mMVPMatrix,0,mProjectMatrix,0,mViewMatrix,0);
         System.arraycopy(mMVPMatrix,0,mFinalMatrix,0,16);
@@ -87,15 +86,149 @@ public class SkySphere{
         GLES20.glUseProgram(mHProgram);
         GLES20.glUniformMatrix4fv(mHMatrix,1,false,mFinalMatrix,0);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,textureId);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,mHUTexture);
 
         GLES20.glEnableVertexAttribArray(mHPosition);
-        GLES20.glVertexAttribPointer(mHPosition,3,GLES20.GL_FLOAT,false,3*4,posBuffer);
+        GLES20.glVertexAttribPointer(mHPosition,3,GLES20.GL_FLOAT,false,0,posBuffer);
         GLES20.glEnableVertexAttribArray(mHCoordinate);
-        GLES20.glVertexAttribPointer(mHCoordinate,2,GLES20.GL_FLOAT,false,2*4,cooBuffer);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES,0,vCount);
+        GLES20.glVertexAttribPointer(mHCoordinate,2,GLES20.GL_FLOAT,false,0,cooBuffer);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vCount);
+
         GLES20.glDisableVertexAttribArray(mHPosition);
-        GLES20.glDisableVertexAttribArray(mHCoordinate);
+    }
+
+
+    private void calculateAttribute(){
+        ArrayList<Float> alVertix = new ArrayList<Float>();// 存放顶点坐标的ArrayList
+        ArrayList<Float> textureVertix = new ArrayList<Float>();// 存放纹理坐标的ArrayList
+        for (int vAngle = 0; vAngle < 180; vAngle = vAngle + angleSpan)// 垂直方向angleSpan度一份
+        {
+            for (int hAngle = 0; hAngle < 360; hAngle = hAngle + angleSpan)// 水平方向angleSpan度一份
+            {
+                // 纵向横向各到一个角度后计算对应的此点在球面上的坐标
+                float x0 = (float) (r * UNIT_SIZE
+                    * Math.sin(Math.toRadians(vAngle)) * Math.cos(Math
+                    .toRadians(hAngle)));
+                float y0 = (float) (r * UNIT_SIZE
+                    * Math.sin(Math.toRadians(vAngle)) * Math.sin(Math
+                    .toRadians(hAngle)));
+                float z0 = (float) (r * UNIT_SIZE * Math.cos(Math
+                    .toRadians(vAngle)));
+                // Log.w("x0 y0 z0","" + x0 + "  "+y0+ "  " +z0);
+
+                float x1 = (float) (r * UNIT_SIZE
+                    * Math.sin(Math.toRadians(vAngle)) * Math.cos(Math
+                    .toRadians(hAngle + angleSpan)));
+                float y1 = (float) (r * UNIT_SIZE
+                    * Math.sin(Math.toRadians(vAngle)) * Math.sin(Math
+                    .toRadians(hAngle + angleSpan)));
+                float z1 = (float) (r * UNIT_SIZE * Math.cos(Math
+                    .toRadians(vAngle)));
+
+                float x2 = (float) (r * UNIT_SIZE
+                    * Math.sin(Math.toRadians(vAngle + angleSpan)) * Math
+                    .cos(Math.toRadians(hAngle + angleSpan)));
+                float y2 = (float) (r * UNIT_SIZE
+                    * Math.sin(Math.toRadians(vAngle + angleSpan)) * Math
+                    .sin(Math.toRadians(hAngle + angleSpan)));
+                float z2 = (float) (r * UNIT_SIZE * Math.cos(Math
+                    .toRadians(vAngle + angleSpan)));
+                // Log.w("x2 y2 z2","" + x2 + "  "+y2+ "  " +z2);
+                float x3 = (float) (r * UNIT_SIZE
+                    * Math.sin(Math.toRadians(vAngle + angleSpan)) * Math
+                    .cos(Math.toRadians(hAngle)));
+                float y3 = (float) (r * UNIT_SIZE
+                    * Math.sin(Math.toRadians(vAngle + angleSpan)) * Math
+                    .sin(Math.toRadians(hAngle)));
+                float z3 = (float) (r * UNIT_SIZE * Math.cos(Math
+                    .toRadians(vAngle + angleSpan)));
+                // Log.w("x3 y3 z3","" + x3 + "  "+y3+ "  " +z3);
+                // 将计算出来的XYZ坐标加入存放顶点坐标的ArrayList
+                alVertix.add(x1);
+                alVertix.add(y1);
+                alVertix.add(z1);
+                alVertix.add(x3);
+                alVertix.add(y3);
+                alVertix.add(z3);
+                alVertix.add(x0);
+                alVertix.add(y0);
+                alVertix.add(z0);
+
+                // *****************************************************************
+                float s0 = hAngle / 360.0f;
+                float s1 = (hAngle + angleSpan)/360.0f ;
+                float t0 = 1 - vAngle / 180.0f;
+                float t1 = 1 - (vAngle + angleSpan) / 180.0f;
+
+                textureVertix.add(s1);// x1 y1对应纹理坐标
+                textureVertix.add(t0);
+                textureVertix.add(s0);// x3 y3对应纹理坐标
+                textureVertix.add(t1);
+                textureVertix.add(s0);// x0 y0对应纹理坐标
+                textureVertix.add(t0);
+
+                // *****************************************************************
+                alVertix.add(x1);
+                alVertix.add(y1);
+                alVertix.add(z1);
+                alVertix.add(x2);
+                alVertix.add(y2);
+                alVertix.add(z2);
+                alVertix.add(x3);
+                alVertix.add(y3);
+                alVertix.add(z3);
+
+                // *****************************************************************
+                textureVertix.add(s1);// x1 y1对应纹理坐标
+                textureVertix.add(t0);
+                textureVertix.add(s1);// x2 y3对应纹理坐标
+                textureVertix.add(t1);
+                textureVertix.add(s0);// x3 y3对应纹理坐标
+                textureVertix.add(t1);
+                // *****************************************************************
+            }
+        }
+        vCount = alVertix.size() / 3;// 顶点的数量
+        // 将alVertix中的坐标值转存到一个float数组中
+        float vertices[] = new float[vCount * 3];
+        for (int i = 0; i < alVertix.size(); i++) {
+            vertices[i] = alVertix.get(i);
+        }
+        posBuffer = ByteBuffer
+            .allocateDirect(vertices.length * 4)
+            .order(ByteOrder.nativeOrder())
+            .asFloatBuffer();
+        // 把坐标们加入FloatBuffer中
+        posBuffer.put(vertices);
+        // 设置buffer，从第一个坐标开始读
+        posBuffer.position(0);
+        // *****************************************************************
+        float textures[] = new float[textureVertix.size()];
+        for(int i=0;i<textureVertix.size();i++){
+            textures[i] = textureVertix.get(i);
+        }
+        cooBuffer = ByteBuffer
+            .allocateDirect(textures.length * 4)
+            .order(ByteOrder.nativeOrder())
+            .asFloatBuffer();
+        // 把坐标们加入FloatBuffer中
+        cooBuffer.put(textures);
+        // 设置buffer，从第一个坐标开始读
+        cooBuffer.position(0);
+    }
+
+    private FloatBuffer convertToFloatBuffer(ArrayList<Float> data){
+        float[] d=new float[data.size()];
+        for (int i=0;i<d.length;i++){
+            d[i]=data.get(i);
+        }
+
+        ByteBuffer buffer=ByteBuffer.allocateDirect(data.size()*4);
+        buffer.order(ByteOrder.nativeOrder());
+        FloatBuffer ret=buffer.asFloatBuffer();
+        ret.put(d);
+        ret.position(0);
+        return ret;
     }
 
     private int createTexture(){
@@ -115,226 +248,9 @@ public class SkySphere{
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,GLES20.GL_CLAMP_TO_EDGE);
             //根据以上指定的参数，生成一个2D纹理
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, mBitmap, 0);
-            mBitmap.recycle();
             return texture[0];
         }
         return 0;
     }
-
-
-
-    private int vCount=0;
-    private float bHalf=0;//黄金长方形的宽
-    private float r=0;//球的半径
-
-    //自定义的初始化顶点数据的方法
-    public void initVertexData(float scale, float aHalf, int n) //大小，黄金长方形长边的一半，分段数
-    {
-        aHalf*=scale;		//长边的一半
-        bHalf=aHalf*0.618034f;		//短边的一半
-        r=(float) Math.sqrt(aHalf*aHalf+bHalf*bHalf);
-        vCount=3*20*n*n;//顶点个数，共有20个三角形，每个三角形都有三个顶点
-        //正20面体坐标数据初始化
-        ArrayList<Float> alVertix20=new ArrayList<Float>();//正20面体的顶点列表（未卷绕）
-        ArrayList<Integer> alFaceIndex20=new ArrayList<Integer>();//正20面体组织成面的顶点的索引值列表（按逆时针卷绕）
-        //正20面体顶点
-        initAlVertix20(alVertix20,aHalf,bHalf);
-        //正20面体索引
-        initAlFaceIndex20(alFaceIndex20);
-        //计算卷绕顶点
-        float[] vertices20=VectorUtil.cullVertex(alVertix20, alFaceIndex20);//只计算顶点
-
-        //坐标数据初始化
-        ArrayList<Float> alVertix=new ArrayList<Float>();//原顶点列表（未卷绕）
-        ArrayList<Integer> alFaceIndex=new ArrayList<Integer>();//组织成面的顶点的索引值列表（按逆时针卷绕）
-        int vnCount=0;//前i-1行前所有顶点数的和
-        for(int k=0;k<vertices20.length;k+=9)//对正20面体每个大三角形循环
-        {
-            float [] v1=new float[]{vertices20[k+0], vertices20[k+1], vertices20[k+2]};
-            float [] v2=new float[]{vertices20[k+3], vertices20[k+4], vertices20[k+5]};
-            float [] v3=new float[]{vertices20[k+6], vertices20[k+7], vertices20[k+8]};
-            //顶点
-            for(int i=0;i<=n;i++)
-            {
-                float[] viStart=VectorUtil.devideBall(r, v1, v2, n, i);
-                float[] viEnd=VectorUtil.devideBall(r, v1, v3, n, i);
-                for(int j=0;j<=i;j++)
-                {
-                    float[] vi=VectorUtil.devideBall(r, viStart, viEnd, i, j);
-                    alVertix.add(vi[0]); alVertix.add(vi[1]); alVertix.add(vi[2]);
-                }
-            }
-            //索引
-            for(int i=0;i<n;i++)
-            {
-                if(i==0){//若是第0行，直接加入卷绕后顶点索引012
-                    alFaceIndex.add(vnCount+0); alFaceIndex.add(vnCount+1);alFaceIndex.add(vnCount+2);
-                    vnCount+=1;
-                    if(i==n-1){//如果是每个大三角形的最后一次循环，将下一列的顶点个数也加上
-                        vnCount+=2;
-                    }
-                    continue;
-                }
-                int iStart=vnCount;//第i行开始的索引
-                int viCount=i+1;//第i行顶点数
-                int iEnd=iStart+viCount-1;//第i行结束索引
-
-                int iStartNext=iStart+viCount;//第i+1行开始的索引
-                int viCountNext=viCount+1;//第i+1行顶点数
-                int iEndNext=iStartNext+viCountNext-1;//第i+1行结束的索引
-                //前面的四边形
-                for(int j=0;j<viCount-1;j++)
-                {
-                    int index0=iStart+j;//四边形的四个顶点索引
-                    int index1=index0+1;
-                    int index2=iStartNext+j;
-                    int index3=index2+1;
-                    alFaceIndex.add(index0); alFaceIndex.add(index2);alFaceIndex.add(index3);//加入前面的四边形
-                    alFaceIndex.add(index0); alFaceIndex.add(index3);alFaceIndex.add(index1);
-                }// j
-                alFaceIndex.add(iEnd); alFaceIndex.add(iEndNext-1);alFaceIndex.add(iEndNext); //最后一个三角形
-                vnCount+=viCount;//第i行前所有顶点数的和
-                if(i==n-1){//如果是每个大三角形的最后一次循环，将下一列的顶点个数也加上
-                    vnCount+=viCountNext;
-                }
-            }// i
-        }// k
-
-        //计算卷绕顶点
-        float[] vertices=VectorUtil.cullVertex(alVertix, alFaceIndex);//只计算顶点
-        float[] normals=vertices;//顶点就是法向量
-
-        //纹理
-        //正20面体纹理坐标数据初始化
-        ArrayList<Float> alST20=new ArrayList<Float>();//正20面体的纹理坐标列表（未卷绕）
-        ArrayList<Integer> alTexIndex20=new ArrayList<Integer>();//正20面体组织成面的纹理坐标的索引值列表（按逆时针卷绕）
-        //正20面体纹理坐标
-        float sSpan=1/5.5f;//每个纹理三角形的边长
-        float tSpan=1/3.0f;//每个纹理三角形的高
-        //按正二十面体的平面展开图计算纹理坐标
-        for(int i=0;i<5;i++){
-            alST20.add(sSpan+sSpan*i); alST20.add(0f);
-        }
-        for(int i=0;i<6;i++){
-            alST20.add(sSpan/2+sSpan*i); alST20.add(tSpan);
-        }
-        for(int i=0;i<6;i++){
-            alST20.add(sSpan*i); alST20.add(tSpan*2);
-        }
-        for(int i=0;i<5;i++){
-            alST20.add(sSpan/2+sSpan*i); alST20.add(tSpan*3);
-        }
-        //正20面体索引
-        initAlTexIndex20(alTexIndex20);
-
-        //计算卷绕纹理坐标
-        float[] st20=VectorUtil.cullTexCoor(alST20, alTexIndex20);//只计算纹理坐标
-        ArrayList<Float> alST=new ArrayList<Float>();//原纹理坐标列表（未卷绕）
-        for(int k=0;k<st20.length;k+=6)
-        {
-            float [] st1=new float[]{st20[k+0], st20[k+1], 0};//三角形的纹理坐标
-            float [] st2=new float[]{st20[k+2], st20[k+3], 0};
-            float [] st3=new float[]{st20[k+4], st20[k+5], 0};
-            for(int i=0;i<=n;i++)
-            {
-                float[] stiStart=VectorUtil.devideLine(st1, st2, n, i);
-                float[] stiEnd=VectorUtil.devideLine(st1, st3, n, i);
-                for(int j=0;j<=i;j++)
-                {
-                    float[] sti=VectorUtil.devideLine(stiStart, stiEnd, i, j);
-                    //将纹理坐标加入列表
-                    alST.add(sti[0]); alST.add(sti[1]);
-                }
-            }
-        }
-        //计算卷绕后纹理坐标
-        float[] textures=VectorUtil.cullTexCoor(alST, alFaceIndex);
-
-        //顶点坐标数据初始化
-        ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length*4);//创建顶点坐标数据缓冲
-        vbb.order(ByteOrder.nativeOrder());//设置字节顺序为本地操作系统顺序
-        posBuffer = vbb.asFloatBuffer();//转换为float型缓冲
-        posBuffer.put(vertices);//向缓冲区中放入顶点坐标数据
-        posBuffer.position(0);//设置缓冲区起始位置
-        //st坐标数据初始化
-        ByteBuffer tbb = ByteBuffer.allocateDirect(textures.length*4);//创建顶点纹理数据缓冲
-        tbb.order(ByteOrder.nativeOrder());//设置字节顺序为本地操作系统顺序
-        cooBuffer = tbb.asFloatBuffer();//转换为float型缓冲
-        cooBuffer.put(textures);//向缓冲区中放入顶点纹理数据
-        cooBuffer.position(0);//设置缓冲区起始位置
-    }
-
-    public void initAlVertix20(ArrayList<Float> alVertix20,float aHalf,float bHalf){
-
-        alVertix20.add(0f); alVertix20.add(aHalf); alVertix20.add(-bHalf);//顶正棱锥顶点
-
-        alVertix20.add(0f); alVertix20.add(aHalf); alVertix20.add(bHalf);//棱柱上的点
-        alVertix20.add(aHalf); alVertix20.add(bHalf); alVertix20.add(0f);
-        alVertix20.add(bHalf); alVertix20.add(0f); alVertix20.add(-aHalf);
-        alVertix20.add(-bHalf); alVertix20.add(0f); alVertix20.add(-aHalf);
-        alVertix20.add(-aHalf); alVertix20.add(bHalf); alVertix20.add(0f);
-
-        alVertix20.add(-bHalf); alVertix20.add(0f); alVertix20.add(aHalf);
-        alVertix20.add(bHalf); alVertix20.add(0f); alVertix20.add(aHalf);
-        alVertix20.add(aHalf); alVertix20.add(-bHalf); alVertix20.add(0f);
-        alVertix20.add(0f); alVertix20.add(-aHalf); alVertix20.add(-bHalf);
-        alVertix20.add(-aHalf); alVertix20.add(-bHalf); alVertix20.add(0f);
-
-        alVertix20.add(0f); alVertix20.add(-aHalf); alVertix20.add(bHalf);//底棱锥顶点
-
-    }
-
-    public void initAlFaceIndex20(ArrayList<Integer> alFaceIndex20){ //初始化正二十面体的顶点索引数据
-
-        alFaceIndex20.add(0); alFaceIndex20.add(1); alFaceIndex20.add(2);
-        alFaceIndex20.add(0); alFaceIndex20.add(2); alFaceIndex20.add(3);
-        alFaceIndex20.add(0); alFaceIndex20.add(3); alFaceIndex20.add(4);
-        alFaceIndex20.add(0); alFaceIndex20.add(4); alFaceIndex20.add(5);
-        alFaceIndex20.add(0); alFaceIndex20.add(5); alFaceIndex20.add(1);
-
-        alFaceIndex20.add(1); alFaceIndex20.add(6); alFaceIndex20.add(7);
-        alFaceIndex20.add(1); alFaceIndex20.add(7); alFaceIndex20.add(2);
-        alFaceIndex20.add(2); alFaceIndex20.add(7); alFaceIndex20.add(8);
-        alFaceIndex20.add(2); alFaceIndex20.add(8); alFaceIndex20.add(3);
-        alFaceIndex20.add(3); alFaceIndex20.add(8); alFaceIndex20.add(9);
-        alFaceIndex20.add(3); alFaceIndex20.add(9); alFaceIndex20.add(4);
-        alFaceIndex20.add(4); alFaceIndex20.add(9); alFaceIndex20.add(10);
-        alFaceIndex20.add(4); alFaceIndex20.add(10); alFaceIndex20.add(5);
-        alFaceIndex20.add(5); alFaceIndex20.add(10); alFaceIndex20.add(6);
-        alFaceIndex20.add(5); alFaceIndex20.add(6); alFaceIndex20.add(1);
-
-        alFaceIndex20.add(6); alFaceIndex20.add(11); alFaceIndex20.add(7);
-        alFaceIndex20.add(7); alFaceIndex20.add(11); alFaceIndex20.add(8);
-        alFaceIndex20.add(8); alFaceIndex20.add(11); alFaceIndex20.add(9);
-        alFaceIndex20.add(9); alFaceIndex20.add(11); alFaceIndex20.add(10);
-        alFaceIndex20.add(10); alFaceIndex20.add(11); alFaceIndex20.add(6);
-    }
-    public void initAlTexIndex20(ArrayList<Integer> alTexIndex20) //初始化顶点纹理索引数据
-    {
-        alTexIndex20.add(0); alTexIndex20.add(5); alTexIndex20.add(6);
-        alTexIndex20.add(1); alTexIndex20.add(6); alTexIndex20.add(7);
-        alTexIndex20.add(2); alTexIndex20.add(7); alTexIndex20.add(8);
-        alTexIndex20.add(3); alTexIndex20.add(8); alTexIndex20.add(9);
-        alTexIndex20.add(4); alTexIndex20.add(9); alTexIndex20.add(10);
-
-        alTexIndex20.add(5); alTexIndex20.add(11); alTexIndex20.add(12);
-        alTexIndex20.add(5); alTexIndex20.add(12); alTexIndex20.add(6);
-        alTexIndex20.add(6); alTexIndex20.add(12); alTexIndex20.add(13);
-        alTexIndex20.add(6); alTexIndex20.add(13); alTexIndex20.add(7);
-        alTexIndex20.add(7); alTexIndex20.add(13); alTexIndex20.add(14);
-        alTexIndex20.add(7); alTexIndex20.add(14); alTexIndex20.add(8);
-        alTexIndex20.add(8); alTexIndex20.add(14); alTexIndex20.add(15);
-        alTexIndex20.add(8); alTexIndex20.add(15); alTexIndex20.add(9);
-        alTexIndex20.add(9); alTexIndex20.add(15); alTexIndex20.add(16);
-        alTexIndex20.add(9); alTexIndex20.add(16); alTexIndex20.add(10);
-
-        alTexIndex20.add(11); alTexIndex20.add(17); alTexIndex20.add(12);
-        alTexIndex20.add(12); alTexIndex20.add(18); alTexIndex20.add(13);
-        alTexIndex20.add(13); alTexIndex20.add(19); alTexIndex20.add(14);
-        alTexIndex20.add(14); alTexIndex20.add(20); alTexIndex20.add(15);
-        alTexIndex20.add(15); alTexIndex20.add(21); alTexIndex20.add(16);
-
-    }
-
 
 }

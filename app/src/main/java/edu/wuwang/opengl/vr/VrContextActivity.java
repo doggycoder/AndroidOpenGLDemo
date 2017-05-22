@@ -43,7 +43,7 @@ public class VrContextActivity extends BaseActivity implements GLSurfaceView.Ren
         mGLView.setRenderer(this);
         mGLView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
-        mSkySphere=new SkySphere(this.getApplicationContext(),"vr/360sp.jpg",2,1.6f,10);
+        mSkySphere=new SkySphere(this.getApplicationContext(),"vr/360sp.jpg");
     }
 
     @Override
@@ -63,7 +63,9 @@ public class VrContextActivity extends BaseActivity implements GLSurfaceView.Ren
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         mSkySphere.create();
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        //GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        GLES20.glEnable(GLES20.GL_CULL_FACE);
+        GLES20.glCullFace(GLES20.GL_FRONT);
     }
 
     @Override
