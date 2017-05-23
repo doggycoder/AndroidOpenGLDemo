@@ -25,6 +25,11 @@
 19. 3D《皮卡丘》模型及纹理加载，光照处理
 20. Camera1API/Camera2API预览到SurfaceView和TextureView
 21. Camera上增加动画
+22. VR 天空盒（球形）效果
+
+## 20170523更新
+1、 球形天空盒实现
+2、 VR效果
 
 ## 20170324更新
 1. 增加Camera上播放动画的示例
