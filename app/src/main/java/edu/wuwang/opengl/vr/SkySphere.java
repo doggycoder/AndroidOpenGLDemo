@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import javax.microedition.khronos.opengles.GL;
 
 /**
  * Created by aiya on 2017/5/19.
@@ -21,11 +22,10 @@ import java.util.ArrayList;
 public class SkySphere{
 
     private static final float UNIT_SIZE = 1f;// 单位尺寸
-    private float r = 0.5f; // 球的半径
+    private float r = 2f; // 球的半径
     final int angleSpan = 2;// 将球进行单位切分的角度
     int vCount = 0;// 顶点个数，先初始化为0
 
-    private float step=2f;
     private Resources res;
 
     private int mHProgram;
@@ -78,9 +78,11 @@ public class SkySphere{
         float ratio=(float)width/height;
         //设置透视投影
         //Matrix.frustumM(mProjectMatrix, 0, -ratio*skyRate, ratio*skyRate, -1*skyRate, 1*skyRate, 1, 200);
-        MatrixHelper.perspectiveM(mProjectMatrix,0,35,ratio,0.5f,300);
+        //透视投影矩阵/视锥
+        MatrixHelper.perspectiveM(mProjectMatrix,0,45,ratio,1f,300);
         //设置相机位置
-        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0.0f, 2f, 0f, 0f,0.0f, 0f,-1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0.0f,0.0f, 0.0f, 0.0f,-1.0f, 0f,1.0f, 0.0f);
+        //模型矩阵
         Matrix.setIdentityM(mModelMatrix,0);
         //Matrix.scaleM(mModelMatrix,0,2,2,2);
     }
@@ -158,43 +160,43 @@ public class SkySphere{
                 alVertix.add(x1);
                 alVertix.add(y1);
                 alVertix.add(z1);
-                alVertix.add(x3);
-                alVertix.add(y3);
-                alVertix.add(z3);
                 alVertix.add(x0);
                 alVertix.add(y0);
                 alVertix.add(z0);
+                alVertix.add(x3);
+                alVertix.add(y3);
+                alVertix.add(z3);
 
                 // *****************************************************************
                 float s0 = hAngle / 360.0f;
                 float s1 = (hAngle + angleSpan)/360.0f ;
-                float t0 = 1 - vAngle / 180.0f;
-                float t1 = 1 - (vAngle + angleSpan) / 180.0f;
+                float t0 =vAngle / 180.0f;
+                float t1 = (vAngle + angleSpan) / 180.0f;
 
                 textureVertix.add(s1);// x1 y1对应纹理坐标
                 textureVertix.add(t0);
-                textureVertix.add(s0);// x3 y3对应纹理坐标
-                textureVertix.add(t1);
                 textureVertix.add(s0);// x0 y0对应纹理坐标
                 textureVertix.add(t0);
+                textureVertix.add(s0);// x3 y3对应纹理坐标
+                textureVertix.add(t1);
 
                 // *****************************************************************
                 alVertix.add(x1);
                 alVertix.add(y1);
                 alVertix.add(z1);
-                alVertix.add(x2);
-                alVertix.add(y2);
-                alVertix.add(z2);
                 alVertix.add(x3);
                 alVertix.add(y3);
                 alVertix.add(z3);
+                alVertix.add(x2);
+                alVertix.add(y2);
+                alVertix.add(z2);
 
                 // *****************************************************************
                 textureVertix.add(s1);// x1 y1对应纹理坐标
                 textureVertix.add(t0);
-                textureVertix.add(s1);// x2 y3对应纹理坐标
-                textureVertix.add(t1);
                 textureVertix.add(s0);// x3 y3对应纹理坐标
+                textureVertix.add(t1);
+                textureVertix.add(s1);// x2 y3对应纹理坐标
                 textureVertix.add(t1);
                 // *****************************************************************
             }

@@ -9,6 +9,6 @@ attribute vec2 aCoordinate;
 varying vec2 vCoordinate;
 
 void main(){
-    gl_Position=uProjMatrix*uViewMatrix*uRotateMatrix*uModelMatrix*vec4(aPosition,1);
+    gl_Position=uProjMatrix*uRotateMatrix*uViewMatrix*uModelMatrix*vec4(aPosition,1);
     vCoordinate=aCoordinate;
 }
