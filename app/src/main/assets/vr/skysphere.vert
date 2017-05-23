@@ -1,4 +1,7 @@
-uniform mat4 uMatrix;
+uniform mat4 uProjMatrix;
+uniform mat4 uViewMatrix;
+uniform mat4 uModelMatrix;
+uniform mat4 uRotateMatrix;
 
 attribute vec3 aPosition;
 attribute vec2 aCoordinate;
@@ -6,6 +9,6 @@ attribute vec2 aCoordinate;
 varying vec2 vCoordinate;
 
 void main(){
-    gl_Position=uMatrix*vec4(aPosition,1);
+    gl_Position=uProjMatrix*uViewMatrix*uRotateMatrix*uModelMatrix*vec4(aPosition,1);
     vCoordinate=aCoordinate;
 }

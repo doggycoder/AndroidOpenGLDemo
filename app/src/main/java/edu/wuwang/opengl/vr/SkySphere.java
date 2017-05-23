@@ -30,14 +30,19 @@ public class SkySphere{
 
     private int mHProgram;
     private int mHUTexture;
-    private int mHMatrix;
+    private int mHProjMatrix;
+    private int mHViewMatrix;
+    private int mHModelMatrix;
+    private int mHRotateMatrix;
     private int mHPosition;
     private int mHCoordinate;
 
+    private int textureId;
+
     private float[] mViewMatrix=new float[16];
     private float[] mProjectMatrix=new float[16];
-    private float[] mMVPMatrix=new float[16];
-    private float[] mFinalMatrix=new float[16];
+    private float[] mModelMatrix=new float[16];
+    private float[] mRotateMatrix=new float[16];
 
     private FloatBuffer posBuffer;
     private FloatBuffer cooBuffer;
@@ -57,11 +62,14 @@ public class SkySphere{
 
     public void create(){
         mHProgram=Gl2Utils.createGlProgramByRes(res,"vr/skysphere.vert","vr/skysphere.frag");
-        mHMatrix=GLES20.glGetUniformLocation(mHProgram,"uMatrix");
+        mHProjMatrix=GLES20.glGetUniformLocation(mHProgram,"uProjMatrix");
+        mHViewMatrix=GLES20.glGetUniformLocation(mHProgram,"uViewMatrix");
+        mHModelMatrix=GLES20.glGetUniformLocation(mHProgram,"uModelMatrix");
+        mHRotateMatrix=GLES20.glGetUniformLocation(mHProgram,"uRotateMatrix");
         mHUTexture=GLES20.glGetUniformLocation(mHProgram,"uTexture");
         mHPosition=GLES20.glGetAttribLocation(mHProgram,"aPosition");
         mHCoordinate=GLES20.glGetAttribLocation(mHProgram,"aCoordinate");
-        createTexture();
+        textureId=createTexture();
         calculateAttribute();
     }
 
@@ -69,24 +77,27 @@ public class SkySphere{
         //计算宽高比
         float ratio=(float)width/height;
         //设置透视投影
-        Matrix.frustumM(mProjectMatrix, 0, -ratio*skyRate, ratio*skyRate, -1*skyRate, 1*skyRate, 1, 200);
+        //Matrix.frustumM(mProjectMatrix, 0, -ratio*skyRate, ratio*skyRate, -1*skyRate, 1*skyRate, 1, 200);
+        MatrixHelper.perspectiveM(mProjectMatrix,0,35,ratio,0.5f,300);
         //设置相机位置
-        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0.0f, 2f, 0f, 0f, 0.0f, 0f, -1.0f, 0.0f);
-        //计算变换矩阵
-        Matrix.multiplyMM(mMVPMatrix,0,mProjectMatrix,0,mViewMatrix,0);
-        System.arraycopy(mMVPMatrix,0,mFinalMatrix,0,16);
+        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0.0f, 2f, 0f, 0f,0.0f, 0f,-1.0f, 0.0f);
+        Matrix.setIdentityM(mModelMatrix,0);
+        //Matrix.scaleM(mModelMatrix,0,2,2,2);
     }
 
     public void setMatrix(float[] matrix){
-        Matrix.multiplyMM(mFinalMatrix,0,mMVPMatrix,0,matrix,0);
+        System.arraycopy(matrix,0,mRotateMatrix,0,16);
     }
 
     public void draw(){
 
         GLES20.glUseProgram(mHProgram);
-        GLES20.glUniformMatrix4fv(mHMatrix,1,false,mFinalMatrix,0);
+        GLES20.glUniformMatrix4fv(mHProjMatrix,1,false,mProjectMatrix,0);
+        GLES20.glUniformMatrix4fv(mHViewMatrix,1,false,mViewMatrix,0);
+        GLES20.glUniformMatrix4fv(mHModelMatrix,1,false,mModelMatrix,0);
+        GLES20.glUniformMatrix4fv(mHRotateMatrix,1,false,mRotateMatrix,0);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,mHUTexture);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,textureId);
 
         GLES20.glEnableVertexAttribArray(mHPosition);
         GLES20.glVertexAttribPointer(mHPosition,3,GLES20.GL_FLOAT,false,0,posBuffer);
