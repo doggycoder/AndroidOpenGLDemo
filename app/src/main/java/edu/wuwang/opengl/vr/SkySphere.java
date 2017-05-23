@@ -23,7 +23,10 @@ public class SkySphere{
 
     private static final float UNIT_SIZE = 1f;// 单位尺寸
     private float r = 2f; // 球的半径
-    final int angleSpan = 2;// 将球进行单位切分的角度
+
+    private float radius=2f;
+
+    final double angleSpan = Math.PI/90f;// 将球进行单位切分的角度
     int vCount = 0;// 顶点个数，先初始化为0
 
     private Resources res;
@@ -112,51 +115,27 @@ public class SkySphere{
 
 
     private void calculateAttribute(){
-        ArrayList<Float> alVertix = new ArrayList<Float>();// 存放顶点坐标的ArrayList
-        ArrayList<Float> textureVertix = new ArrayList<Float>();// 存放纹理坐标的ArrayList
-        for (int vAngle = 0; vAngle < 180; vAngle = vAngle + angleSpan)// 垂直方向angleSpan度一份
-        {
-            for (int hAngle = 0; hAngle < 360; hAngle = hAngle + angleSpan)// 水平方向angleSpan度一份
-            {
-                // 纵向横向各到一个角度后计算对应的此点在球面上的坐标
-                float x0 = (float) (r * UNIT_SIZE
-                    * Math.sin(Math.toRadians(vAngle)) * Math.cos(Math
-                    .toRadians(hAngle)));
-                float y0 = (float) (r * UNIT_SIZE
-                    * Math.sin(Math.toRadians(vAngle)) * Math.sin(Math
-                    .toRadians(hAngle)));
-                float z0 = (float) (r * UNIT_SIZE * Math.cos(Math
-                    .toRadians(vAngle)));
-                // Log.w("x0 y0 z0","" + x0 + "  "+y0+ "  " +z0);
+        ArrayList<Float> alVertix = new ArrayList<>();
+        ArrayList<Float> textureVertix = new ArrayList<>();
+        for (double vAngle = 0; vAngle < Math.PI; vAngle = vAngle + angleSpan){
 
-                float x1 = (float) (r * UNIT_SIZE
-                    * Math.sin(Math.toRadians(vAngle)) * Math.cos(Math
-                    .toRadians(hAngle + angleSpan)));
-                float y1 = (float) (r * UNIT_SIZE
-                    * Math.sin(Math.toRadians(vAngle)) * Math.sin(Math
-                    .toRadians(hAngle + angleSpan)));
-                float z1 = (float) (r * UNIT_SIZE * Math.cos(Math
-                    .toRadians(vAngle)));
+            for (double hAngle = 0; hAngle < 2*Math.PI; hAngle = hAngle + angleSpan){
+                float x0 = (float) (radius* Math.sin(vAngle) * Math.cos(hAngle));
+                float y0 = (float) (radius* Math.sin(vAngle) * Math.sin(hAngle));
+                float z0 = (float) (radius * Math.cos((vAngle)));
 
-                float x2 = (float) (r * UNIT_SIZE
-                    * Math.sin(Math.toRadians(vAngle + angleSpan)) * Math
-                    .cos(Math.toRadians(hAngle + angleSpan)));
-                float y2 = (float) (r * UNIT_SIZE
-                    * Math.sin(Math.toRadians(vAngle + angleSpan)) * Math
-                    .sin(Math.toRadians(hAngle + angleSpan)));
-                float z2 = (float) (r * UNIT_SIZE * Math.cos(Math
-                    .toRadians(vAngle + angleSpan)));
-                // Log.w("x2 y2 z2","" + x2 + "  "+y2+ "  " +z2);
-                float x3 = (float) (r * UNIT_SIZE
-                    * Math.sin(Math.toRadians(vAngle + angleSpan)) * Math
-                    .cos(Math.toRadians(hAngle)));
-                float y3 = (float) (r * UNIT_SIZE
-                    * Math.sin(Math.toRadians(vAngle + angleSpan)) * Math
-                    .sin(Math.toRadians(hAngle)));
-                float z3 = (float) (r * UNIT_SIZE * Math.cos(Math
-                    .toRadians(vAngle + angleSpan)));
-                // Log.w("x3 y3 z3","" + x3 + "  "+y3+ "  " +z3);
-                // 将计算出来的XYZ坐标加入存放顶点坐标的ArrayList
+                float x1 = (float) (radius* Math.sin(vAngle) * Math.cos(hAngle + angleSpan));
+                float y1 = (float) (radius* Math.sin(vAngle) * Math.sin(hAngle + angleSpan));
+                float z1 = (float) (radius * Math.cos(vAngle));
+
+                float x2 = (float) (radius* Math.sin(vAngle + angleSpan) * Math.cos(hAngle + angleSpan));
+                float y2 = (float) (radius* Math.sin(vAngle + angleSpan) * Math.sin(hAngle + angleSpan));
+                float z2 = (float) (radius * Math.cos(vAngle + angleSpan));
+
+                float x3 = (float) (radius* Math.sin(vAngle + angleSpan) * Math.cos(hAngle));
+                float y3 = (float) (radius* Math.sin(vAngle + angleSpan) * Math.sin(hAngle));
+                float z3 = (float) (radius * Math.cos(vAngle + angleSpan));
+
                 alVertix.add(x1);
                 alVertix.add(y1);
                 alVertix.add(z1);
@@ -167,11 +146,10 @@ public class SkySphere{
                 alVertix.add(y3);
                 alVertix.add(z3);
 
-                // *****************************************************************
-                float s0 = hAngle / 360.0f;
-                float s1 = (hAngle + angleSpan)/360.0f ;
-                float t0 =vAngle / 180.0f;
-                float t1 = (vAngle + angleSpan) / 180.0f;
+                float s0 = (float) (hAngle / Math.PI/2);
+                float s1 = (float) ((hAngle + angleSpan)/Math.PI/2);
+                float t0 = (float) (vAngle / Math.PI);
+                float t1 = (float) ((vAngle + angleSpan) / Math.PI);
 
                 textureVertix.add(s1);// x1 y1对应纹理坐标
                 textureVertix.add(t0);
@@ -180,7 +158,6 @@ public class SkySphere{
                 textureVertix.add(s0);// x3 y3对应纹理坐标
                 textureVertix.add(t1);
 
-                // *****************************************************************
                 alVertix.add(x1);
                 alVertix.add(y1);
                 alVertix.add(z1);
@@ -191,43 +168,17 @@ public class SkySphere{
                 alVertix.add(y2);
                 alVertix.add(z2);
 
-                // *****************************************************************
                 textureVertix.add(s1);// x1 y1对应纹理坐标
                 textureVertix.add(t0);
                 textureVertix.add(s0);// x3 y3对应纹理坐标
                 textureVertix.add(t1);
                 textureVertix.add(s1);// x2 y3对应纹理坐标
                 textureVertix.add(t1);
-                // *****************************************************************
             }
         }
-        vCount = alVertix.size() / 3;// 顶点的数量
-        // 将alVertix中的坐标值转存到一个float数组中
-        float vertices[] = new float[vCount * 3];
-        for (int i = 0; i < alVertix.size(); i++) {
-            vertices[i] = alVertix.get(i);
-        }
-        posBuffer = ByteBuffer
-            .allocateDirect(vertices.length * 4)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer();
-        // 把坐标们加入FloatBuffer中
-        posBuffer.put(vertices);
-        // 设置buffer，从第一个坐标开始读
-        posBuffer.position(0);
-        // *****************************************************************
-        float textures[] = new float[textureVertix.size()];
-        for(int i=0;i<textureVertix.size();i++){
-            textures[i] = textureVertix.get(i);
-        }
-        cooBuffer = ByteBuffer
-            .allocateDirect(textures.length * 4)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer();
-        // 把坐标们加入FloatBuffer中
-        cooBuffer.put(textures);
-        // 设置buffer，从第一个坐标开始读
-        cooBuffer.position(0);
+        vCount = alVertix.size() / 3;
+        posBuffer = convertToFloatBuffer(alVertix);
+        cooBuffer=convertToFloatBuffer(textureVertix);
     }
 
     private FloatBuffer convertToFloatBuffer(ArrayList<Float> data){
