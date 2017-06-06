@@ -1,5 +1,6 @@
 package edu.wuwang.opengl.camera;
 
+import android.view.View;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.microedition.khronos.egl.EGL10;
@@ -86,12 +87,14 @@ public class TextureController implements GLSurfaceView.Renderer {
         mGLView=new GLView(mContext);
 
         //避免GLView的attachToWindow和detachFromWindow崩溃
-        new ViewGroup(mContext) {
+        ViewGroup v=new ViewGroup(mContext) {
             @Override
             protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
             }
-        }.addView(mGLView);
+        };
+        v.addView(mGLView);
+        v.setVisibility(View.GONE);
 
         mEffectFilter=new TextureFilter(mContext.getResources());
         mShowFilter=new NoFilter(mContext.getResources());
@@ -101,8 +104,7 @@ public class TextureController implements GLSurfaceView.Renderer {
         mDataSize=new Point(720,1280);
 
         mWindowSize=new Point(720,1280);
-
-        mGLView.attachedToWindow();
+        //mGLView.attachedToWindow();
     }
 
     //在Surface创建前，应该被调用
