@@ -66,14 +66,18 @@ public class Camera2Activity extends BaseActivity implements FrameCallback {
     private TextureController mController;
     private Renderer mRenderer;
     private int cameraId = 1;
-    private int mWidth;
-    private int mHeight;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PermissionUtils.askPermission(this, new String[]{Manifest.permission.CAMERA, Manifest
             .permission.WRITE_EXTERNAL_STORAGE}, 10, initViewRunnable);
+    }
+
+    protected void onFilterSet(TextureController controller){
+        ZipPkmAnimationFilter mAniFilter=new ZipPkmAnimationFilter(getResources());
+        mAniFilter.setAnimation("assets/etczip/cc.zip");
+        controller.addFilter(mAniFilter);
     }
 
     private Runnable initViewRunnable = new Runnable() {
@@ -94,9 +98,7 @@ public class Camera2Activity extends BaseActivity implements FrameCallback {
 //            filter.setWaterMark(BitmapFactory.decodeResource(getResources(),R.mipmap.logo));
 //            filter.setPosition(300,50,300,150);
 //            mController.addFilter(filter);
-            ZipPkmAnimationFilter mAniFilter=new ZipPkmAnimationFilter(getResources());
-            mAniFilter.setAnimation("assets/etczip/cc.zip");
-            mController.addFilter(mAniFilter);
+            onFilterSet(mController);
             mController.setFrameCallback(720, 1280, Camera2Activity.this);
             mSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
@@ -107,8 +109,6 @@ public class Camera2Activity extends BaseActivity implements FrameCallback {
 
                 @Override
                 public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                    mWidth=width;
-                    mHeight=height;
                     mController.surfaceChanged(width, height);
                 }
 
