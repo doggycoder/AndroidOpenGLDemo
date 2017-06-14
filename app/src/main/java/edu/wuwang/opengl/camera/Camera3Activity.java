@@ -4,6 +4,7 @@ import android.support.v7.widget.AppCompatSeekBar;
 import android.util.Log;
 import android.widget.SeekBar;
 import edu.wuwang.opengl.R;
+import edu.wuwang.opengl.filter.Beauty;
 import edu.wuwang.opengl.filter.LookupFilter;
 
 /**
@@ -13,7 +14,8 @@ import edu.wuwang.opengl.filter.LookupFilter;
 public class Camera3Activity extends Camera2Activity {
 
     private AppCompatSeekBar mSeek;
-    private LookupFilter mFilter;
+    private LookupFilter mLookupFilter;
+    private Beauty mBeautyFilter;
 
     @Override
     protected void setContentView() {
@@ -23,7 +25,8 @@ public class Camera3Activity extends Camera2Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Log.e("wuwang","process:"+progress);
-                mFilter.setIntensity(progress/100f);
+                mLookupFilter.setIntensity(progress/100f);
+                mBeautyFilter.setFlag(progress/20+1);
             }
 
             @Override
@@ -40,9 +43,11 @@ public class Camera3Activity extends Camera2Activity {
 
     @Override
     protected void onFilterSet(TextureController controller) {
-        mFilter=new LookupFilter(getResources());
-        mFilter.setMaskImage("lookup/highkey.png");
-        mFilter.setIntensity(0.0f);
-        controller.addFilter(mFilter);
+        mLookupFilter=new LookupFilter(getResources());
+        mLookupFilter.setMaskImage("lookup/purity.png");
+        mLookupFilter.setIntensity(0.0f);
+        controller.addFilter(mLookupFilter);
+        mBeautyFilter=new Beauty(getResources());
+        controller.addFilter(mBeautyFilter);
     }
 }
