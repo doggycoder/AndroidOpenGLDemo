@@ -41,7 +41,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         add("图形变换",VaryActivity.class);
         add("相机",CameraActivity.class);
         add("相机2 动画",Camera2Activity.class);
-        add("相机3 滤镜",Camera3Activity.class);
+        add("相机3 美颜",Camera3Activity.class);
         add("压缩纹理动画",ZipActivity.class);
         add("FBO使用",FBOActivity.class);
         add("EGL后台处理",EGLBackEnvActivity.class);

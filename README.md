@@ -26,10 +26,15 @@
 20. Camera1API/Camera2API预览到SurfaceView和TextureView
 21. Camera上增加动画
 22. VR 天空盒（球形）效果
+23. 美颜
+
+## 20170614更新
+1. 增加LookupFilter
+2. 增加美颜及滤镜示例
 
 ## 20170523更新
-1、 球形天空盒实现
-2、 VR效果
+1. 球形天空盒实现
+2. VR效果
 
 ## 20170324更新
 1. 增加Camera上播放动画的示例
