@@ -80,6 +80,10 @@ public class Camera2Activity extends BaseActivity implements FrameCallback {
         controller.addFilter(mAniFilter);
     }
 
+    protected void setContentView(){
+        setContentView(R.layout.activity_camera2);
+    }
+
     private Runnable initViewRunnable = new Runnable() {
         @Override
         public void run() {
@@ -90,8 +94,7 @@ public class Camera2Activity extends BaseActivity implements FrameCallback {
             }else{
                 mRenderer = new Camera1Renderer();
             }
-
-            setContentView(R.layout.activity_camera2);
+            setContentView();
             mSurfaceView = (SurfaceView)findViewById(R.id.mSurface);
             mController = new TextureController(Camera2Activity.this);
 //            WaterMarkFilter filter=new WaterMarkFilter(getResources());

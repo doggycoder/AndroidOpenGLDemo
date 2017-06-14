@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:keepScreenOn="true"
+    android:layout_height="match_parent">
+  <FrameLayout android:layout_width="match_parent"
+      android:layout_height="match_parent">
+    <SurfaceView android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/mSurface" />
+  </FrameLayout>
+  <android.support.v7.widget.AppCompatSeekBar
+      android:layout_width="match_parent"
+      android:layout_alignParentTop="true"
+      android:id="@+id/mSeek"
+      android:layout_height="35dp" />
+  <ImageButton
+      android:layout_width="70dp"
+      android:layout_height="70dp"
+      android:contentDescription="@string/app_name"
+      android:background="@drawable/btn_shutter_background"
+      android:id="@+id/mShutter"
+      android:onClick="onClick"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="30dp"
+      android:layout_centerHorizontal="true"/>
+</RelativeLayout>
