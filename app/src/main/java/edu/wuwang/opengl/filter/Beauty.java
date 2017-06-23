@@ -18,10 +18,16 @@ public class Beauty extends AFilter {
     private int gHaaCoef;
     private int gHmixCoef;
     private int gHiternum;
+    private int gHWidth;
+    private int gHHeight;
 
     private float aaCoef;
     private float mixCoef;
     private int iternum;
+
+    private int mWidth=720;
+    private int mHeight=1280;
+
 
     public Beauty(Resources res) {
         super(res);
@@ -30,10 +36,12 @@ public class Beauty extends AFilter {
 
     @Override
     protected void onCreate() {
-        createProgramByAssetsFile("shader/beauty/beauty_vertex.sh", "shader/beauty/beauty_fragment.sh");
+        createProgramByAssetsFile("shader/beauty/beauty.vert", "shader/beauty/beauty.frag");
         gHaaCoef=GLES20.glGetUniformLocation(mProgram,"aaCoef");
         gHmixCoef=GLES20.glGetUniformLocation(mProgram,"mixCoef");
         gHiternum=GLES20.glGetUniformLocation(mProgram,"iternum");
+        gHWidth=GLES20.glGetUniformLocation(mProgram,"mWidth");
+        gHHeight=GLES20.glGetUniformLocation(mProgram,"mHeight");
     }
 
     @Override
@@ -72,12 +80,15 @@ public class Beauty extends AFilter {
 
     @Override
     protected void onSizeChanged(int width, int height) {
-
+        this.mWidth=width;
+        this.mHeight=height;
     }
 
     @Override
     protected void onSetExpandData() {
         super.onSetExpandData();
+        GLES20.glUniform1i(gHWidth,mWidth);
+        GLES20.glUniform1i(gHHeight,mHeight);
         GLES20.glUniform1f(gHaaCoef,aaCoef);
         GLES20.glUniform1f(gHmixCoef,mixCoef);
         GLES20.glUniform1i(gHiternum,iternum);
