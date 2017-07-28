@@ -91,7 +91,7 @@ public class ObjFilter2 extends AFilter {
 
     @Override
     protected void onSizeChanged(int width, int height) {
-
+        GLES20.glViewport(0,0,width,height);
     }
 
     private int createTexture(Bitmap bitmap){
