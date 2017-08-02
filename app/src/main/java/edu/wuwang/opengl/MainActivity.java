@@ -1,5 +1,6 @@
 package edu.wuwang.opengl;
 
+import edu.wuwang.opengl.blend.BlendActivity;
 import edu.wuwang.opengl.camera.Camera3Activity;
 import edu.wuwang.opengl.vr.VrContextActivity;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         add("3D obj模型",ObjLoadActivity.class);
         add("obj+mtl模型",ObjLoadActivity2.class);
         add("VR效果",VrContextActivity.class);
+        add("颜色混合",BlendActivity.class);
         mList.setAdapter(new MenuAdapter());
     }
 

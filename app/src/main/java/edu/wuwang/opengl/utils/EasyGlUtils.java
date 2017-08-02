@@ -7,6 +7,7 @@
  */
 package edu.wuwang.opengl.utils;
 
+import android.graphics.Bitmap;
 import android.opengl.GLES20;
 
 /**

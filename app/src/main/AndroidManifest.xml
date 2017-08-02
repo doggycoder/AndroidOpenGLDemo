@@ -54,6 +54,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".vr.VrContextActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".blend.BlendActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
