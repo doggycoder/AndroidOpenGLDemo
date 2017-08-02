@@ -4,12 +4,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
+import android.widget.TextView;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -33,11 +36,13 @@ public class BlendActivity extends BaseActivity implements GLSurfaceView.Rendere
     private NoFilter mSrcFilter;
     private WheelView mSrcParamView;
     private WheelView mDstParamsView;
+    private TextView mEqua;
 
     private int width,height;
 
     private int nDstPar=GLES20.GL_ONE_MINUS_SRC_ALPHA;
     private int nSrcPar=GLES20.GL_SRC_ALPHA;
+    private int nEquaIndex=0;
 
 
     private String[] paramStr=new String[]{
@@ -54,10 +59,19 @@ public class BlendActivity extends BaseActivity implements GLSurfaceView.Rendere
             GLES20.GL_CONSTANT_ALPHA,GLES20.GL_ONE_MINUS_CONSTANT_ALPHA,GLES20.GL_SRC_ALPHA_SATURATE
     };
 
+    private int[] equaInt=new int[]{
+            GLES20.GL_FUNC_ADD,GLES20.GL_FUNC_SUBTRACT,GLES20.GL_FUNC_REVERSE_SUBTRACT
+    };
+
+    private String[] equaStr=new String[]{
+            "GL_FUNC_ADD","GL_FUNC_SUBTRACT","GL_FUNC_REVERSE_SUBTRACT"
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blend);
+        mEqua= (TextView) findViewById(R.id.mEqua);
         mGLView= (GLSurfaceView) findViewById(R.id.mGLView);
         mGLView.setEGLContextClientVersion(2);
         mGLView.setEGLConfigChooser(8,8,8,8,16,8);
@@ -65,9 +79,19 @@ public class BlendActivity extends BaseActivity implements GLSurfaceView.Rendere
         mGLView.getHolder().setFormat(PixelFormat.TRANSPARENT);
         mGLView.setZOrderOnTop(true);
         mGLView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+
+        mEqua.setText(equaStr[nEquaIndex]);
+        mEqua.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nEquaIndex++;
+                if(nEquaIndex>=3)nEquaIndex=0;
+                mEqua.setText(equaStr[nEquaIndex]);
+            }
+        });
+
         dstBitmap= BitmapFactory.decodeResource(getResources(),R.mipmap.bg);
         srcBitmap= BitmapFactory.decodeResource(getResources(),R.mipmap.src);
-
         mSrcParamView= (WheelView) findViewById(R.id.mSrcParam);
         mDstParamsView= (WheelView) findViewById(R.id.mDstParam);
 
@@ -158,6 +182,7 @@ public class BlendActivity extends BaseActivity implements GLSurfaceView.Rendere
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         GLES20.glEnable(GLES20.GL_BLEND);
         GLES20.glBlendFunc(nSrcPar,nDstPar);
+        GLES20.glBlendEquation(equaInt[nEquaIndex]);
         GLES20.glViewport(0,0,width,height);
         mDstFilter.draw();
         mSrcFilter.draw();
