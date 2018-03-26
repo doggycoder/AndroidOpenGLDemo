@@ -20,6 +20,6 @@ void main(){
    gl_Position = vMatrix * vec4(vPosition,1); //根据总变换矩阵计算此次绘制此顶点位置
 
    vec4 at=vec4(1.0,1.0,1.0,1.0);   //光照强度
-   vec3 pos=vec3(80.0,80.0,80.0);      //光照位置
+   vec3 pos=vec3(100.0,80.0,80.0);      //光照位置
    vDiffuse=pointLight(normalize(vPosition),pos,at);
 }

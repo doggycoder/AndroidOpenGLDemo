@@ -56,6 +56,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".blend.BlendActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".light.LightActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -20,7 +20,7 @@ import edu.wuwang.opengl.utils.ShaderUtils;
  */
 public class BallWithLight extends Shape {
 
-    private float step=2f;
+    private float step=10f;
     private FloatBuffer vertexBuffer;
     private int vSize;
 
@@ -76,7 +76,6 @@ public class BallWithLight extends Shape {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         mProgram= ShaderUtils.createProgram(mView.getResources(),"vshader/BallWithLight.sh","fshader/BallWithLight.sh");
     }
 

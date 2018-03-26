@@ -20,7 +20,7 @@ import edu.wuwang.opengl.utils.ShaderUtils;
  */
 public class Ball extends Shape {
 
-    private float step=2f;
+    private float step=5f;
     private FloatBuffer vertexBuffer;
     private int vSize;
 
