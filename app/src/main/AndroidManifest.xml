@@ -31,6 +31,9 @@
         <activity android:name=".clazz2.Class2Activity"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".clazz3.Class3Activity"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

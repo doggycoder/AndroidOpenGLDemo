@@ -2,6 +2,7 @@ package edu.wuwang.opengl;
 
 import edu.wuwang.opengl.clazz1.Class1Activity;
 import edu.wuwang.opengl.clazz2.Class2Activity;
+import edu.wuwang.opengl.clazz3.Class3Activity;
 
 import java.util.ArrayList;
 
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         data=new ArrayList<>();
         add("第一课：绘制三角形",Class1Activity.class);
         add("第二课：正方形和圆形",Class2Activity.class);
+        add("第二课：立方体",Class3Activity.class);
         mList.setAdapter(new MenuAdapter());
     }
 
